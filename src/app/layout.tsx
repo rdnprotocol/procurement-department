@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { Footer, Header, NavBar } from "@/components";
 
@@ -30,8 +31,9 @@ export default function RootLayout({
       >
         <Header />
         <NavBar />
-        <div className="min-h-[calc(100vh-360px)]">{children}</div>
+        <div className="min-h-[calc(100vh-360px-125px)]">{children}</div>
         <Footer />
+        <Toaster richColors position="top-center" />
       </body>
     </html>
   );
