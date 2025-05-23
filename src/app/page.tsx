@@ -1,10 +1,4 @@
-import {
-  FAQs,
-  Feedback,
-  HighlightNews,
-  NewsSub,
-  TenderInvite,
-} from "@/components";
+import { FAQs, Feedback, HighlightNews, NewsSub } from "@/components";
 import { Container } from "@/components/assets";
 import { Newspaper } from "lucide-react";
 
