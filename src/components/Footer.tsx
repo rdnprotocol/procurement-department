@@ -8,9 +8,9 @@ export const Footer = () => {
   return (
     <div className="relative bg-[#24276B] text-white font-bold text-xs">
       <div className="absolute inset-0 bg-[url('/tumen-nasan.png')] bg-repeat bg-[length:12%_auto] opacity-10 pointer-events-none" />
-      <div className="relative py-4 lg:h-80">
+      <div className="relative pb-4 lg:h-80">
         <Container className="flex flex-col justify-between h-full">
-          <div className="flex lg:flex-row flex-col gap-4 mt-12 mb-4">
+          <div className="flex lg:flex-row flex-col gap-4 mt-10 mb-4">
             <div className="flex flex-col items-center">
               <Image
                 src="/logo-bosoo-white.png"
@@ -59,22 +59,20 @@ export const Footer = () => {
                 <div className="flex items-center gap-2 mt-2 hover:text-blue-600 transition-colors">
                   <MapPin size={16} className="min-w-4" />
                   <p>
-                    Улаанбаатар хот, Хан-Уул дүүрэг, 23 дугаар хороо, Арцатын
-                    ам, Нийслэлийн нутгийн захиргааны төв цогцолбор байр, Б
-                    блок, 7 дугаар давхар
+                    Төв аймаг Зуунмод сум 6 дугаар баг Төр захиргааны 2-р байр
                   </p>
                 </div>
               </a>
               <a href="tel:%20+97675757807">
                 <div className="flex items-center gap-2 mt-4 hover:text-blue-600 transition-colors">
                   <PhoneCall size={16} />
-                  <p>+976 7575-7807</p>
+                  <p>+976 7755-3579</p>
                 </div>
               </a>
               <a href="mailto:info@ub-procurement.mn">
                 <div className="flex items-center gap-2 mt-4 hover:text-blue-600 transition-colors">
                   <Mail size={16} />
-                  <p>info@ub-procurement.mn</p>
+                  <p>www.tuvprocurement@tov.gov.mn</p>
                 </div>
               </a>
             </div>

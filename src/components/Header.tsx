@@ -10,11 +10,11 @@ export const Header = () => {
           <div className="flex gap-4">
             <div className="flex items-center gap-2">
               <PhoneCall size={16} />
-              <p>7575-7807</p>
+              <p>7755 3579</p>
             </div>
             <div className="flex items-center gap-2">
               <Mail size={16} />
-              <p>info@ub-procurement.mn</p>
+              <p>www.tuvprocurement@tov.gov.mn</p>
             </div>
           </div>
         </Container>
@@ -22,3 +22,4 @@ export const Header = () => {
     </div>
   );
 };
+//#F3F4F6
