@@ -12,12 +12,18 @@ export const Footer = () => {
         <Container className="flex flex-col justify-between h-full">
           <div className="flex lg:flex-row flex-col gap-4 mt-10 mb-4">
             <div className="flex flex-col items-center">
-              <Image
-                src="/logo-bosoo-white.png"
-                width={400}
-                height={200}
-                alt="logo"
-              />
+              <div className="flex flex-col items-center text-center gap-2">
+                <Image
+                  src="/logo-tov.jpeg"
+                  width={80}
+                  height={80}
+                  alt="logo"
+                  className="rounded-full"
+                />
+                <p className="w-80 uppercase text-xl font-bold">
+                  Төв аймгийн худалдан авах ажиллагааны газар
+                </p>
+              </div>
               <div className="flex gap-4 justify-center mt-8">
                 <FaYoutube className="size-4 cursor-pointer" />
                 <FaTwitter className="size-4 cursor-pointer" />

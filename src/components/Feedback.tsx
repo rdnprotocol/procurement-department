@@ -64,7 +64,7 @@ export const Feedback = () => {
   });
 
   return (
-    <div className="flex p-6 justify-between">
+    <div className="flex flex-col md:flex-row gap-4 p-6 justify-between">
       <div className="p-6 max-w-3xl bg-gray-50 rounded-lg">
         <div className="mb-8">
           <h1 className="text-2xl md:text-3xl text-center font-bold text-gray-900 mb-4 leading-relaxed">

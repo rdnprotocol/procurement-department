@@ -8,8 +8,14 @@ export const NavBar = () => {
   return (
     <div className="border-b-2 border-[#24276B]">
       <Container>
-        <div className="flex flex-col md:flex-row justify-between items-center mb-2">
-          <Image src="/zassan-logo-2.png" width={380} height={100} alt="logo" />
+        <div className="flex flex-col gap-4 md:flex-row justify-between items-center m-2">
+          <div className="flex items-center gap-4 h-20">
+            <Image src="/logo-tov.jpeg" width={80} height={80} alt="logo" />
+            <Separator orientation="vertical" className="bg-[#7d8cad]" />
+            <p className="w-80 uppercase text-xl font-bold text-[#5371b0]">
+              Төв аймгийн худалдан авах ажиллагааны газар
+            </p>
+          </div>
           <div className="flex items-center gap-8">
             <div className="relative w-80 md:w-96 rounded-full overflow-hidden">
               <Input
