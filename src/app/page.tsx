@@ -5,7 +5,7 @@ import { Newspaper } from "lucide-react";
 export default function Home() {
   return (
     <Container>
-      <main className="p-6">
+      <main className="py-6">
         <div className="grid grid-cols-3 w-full gap-2">
           <div className="col-span-3 lg:col-span-2  border border-[#24276B] rounded-lg overflow-hidden">
             <div className="relative bg-[#24276B] text-white font-bold text-xs">

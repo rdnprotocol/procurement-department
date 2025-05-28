@@ -534,10 +534,10 @@ const SimpleMenuSection = ({
 }) => {
   return (
     <MenubarMenu>
-      <MenubarTrigger className="cursor-pointer font-normal uppercase">
+      <MenubarTrigger className="cursor-pointer font-normal uppercase text-xs">
         {title}
       </MenubarTrigger>
-      <MenubarContent className="p-0 font-normal uppercase">
+      <MenubarContent className="p-0 font-normal uppercase text-xs">
         {items.map((item, index) => (
           <MenubarItem key={index}>
             <Link href={item.href}>{item.title}</Link>
@@ -557,10 +557,10 @@ const NestedMenuSection = ({
 }) => {
   return (
     <MenubarMenu>
-      <MenubarTrigger className="cursor-pointer font-normal uppercase">
+      <MenubarTrigger className="cursor-pointer font-normal uppercase text-xs">
         {title}
       </MenubarTrigger>
-      <MenubarContent className="p-0 font-normal uppercase">
+      <MenubarContent className="p-0 font-normal uppercase text-xs">
         {categories.map((category, index) => (
           <MenubarSub key={index}>
             <MenubarSubTrigger className="cursor-pointer">
@@ -590,7 +590,7 @@ const MobileMenuItem = ({
 }) => (
   <Link
     href={item.href}
-    className="block px-4 py-3 text-sm hover:bg-gray-100 border-b border-gray-200"
+    className="block px-4 py-3 text-xs hover:bg-gray-100 border-b border-gray-200"
     onClick={onClose}
   >
     {item.title}
@@ -660,7 +660,7 @@ const MobileNestedMenuSection = ({
           {categories.map((category, categoryIndex) => (
             <div key={categoryIndex}>
               <button
-                className="w-full px-6 py-2 text-left text-sm flex items-center justify-between hover:bg-gray-100"
+                className="w-full px-6 py-2 text-left text-xs flex items-center justify-between hover:bg-gray-100"
                 onClick={() => toggleSubmenu(categoryIndex)}
               >
                 <span>{category.title}</span>
@@ -676,7 +676,7 @@ const MobileNestedMenuSection = ({
                     <Link
                       key={itemIndex}
                       href={item.href}
-                      className="block px-8 py-2 text-sm hover:bg-gray-100 border-b border-gray-100"
+                      className="block px-8 py-2 text-xs hover:bg-gray-100 border-b border-gray-100"
                       onClick={onClose}
                     >
                       {item.title}
@@ -702,7 +702,7 @@ export const MenuBar = () => {
     <>
       <Menubar className="hidden lg:flex w-fit border-none shadow-none font-normal uppercase bg-transparent">
         <MenubarMenu>
-          <div className="hover:bg-accent hover:text-accent-foreground  font-normal flex items-center rounded-sm px-2 py-1 text-sm outline-hidden select-none">
+          <div className="hover:bg-accent hover:text-accent-foreground  font-normal flex items-center rounded-sm px-2 py-1 text-xs outline-hidden select-none">
             <Link href="/">Нүүр хуудас</Link>
           </div>
         </MenubarMenu>
@@ -728,7 +728,7 @@ export const MenuBar = () => {
         />
 
         <MenubarMenu>
-          <div className="hover:bg-accent hover:text-accent-foreground flex items-center rounded-sm px-2 py-1 text-sm font-normal outline-hidden select-none">
+          <div className="hover:bg-accent hover:text-accent-foreground flex items-center rounded-sm px-2 py-1 text-xs font-normal outline-hidden select-none">
             <Link href="/contact">Холбоо барих</Link>
           </div>
         </MenubarMenu>
@@ -761,7 +761,7 @@ export const MenuBar = () => {
             <div className="overflow-y-auto h-full pb-20">
               <Link
                 href="/"
-                className="block px-4 py-3 text-sm font-normal hover:bg-gray-100 border-b border-gray-200"
+                className="block px-4 py-3 text-xs font-normal hover:bg-gray-100 border-b border-gray-200"
                 onClick={closeMobileMenu}
               >
                 Нүүр хуудас
@@ -811,7 +811,7 @@ export const MenuBar = () => {
 
               <Link
                 href="/contact"
-                className="block px-4 py-3 text-sm font-normal hover:bg-gray-100 border-b border-gray-200"
+                className="block px-4 py-3 text-xs font-normal hover:bg-gray-100 border-b border-gray-200"
                 onClick={closeMobileMenu}
               >
                 Холбоо барих

@@ -18,13 +18,13 @@ export const NavBar = () => {
                   height={80}
                   alt="logo"
                 />
-                <p className="w-64 text-center uppercase text-lg font-normal text-shadow-lg/50">
+                <p className="w-64 text-center leading-tight uppercase text-lg font-normal text-shadow-lg/50">
                   Төв аймгийн худалдан авах ажиллагааны газар
                 </p>
               </div>
-              <div className="w-70 text-sm font-normal uppercase text-shadow-lg/50">
+              {/* <div className="w-70 text-sm font-normal uppercase text-shadow-lg/50">
                 Зөв төлөвлөлт, чанартай бүтээн байгуулалт, үр дүнтэй хяналт
-              </div>
+              </div> */}
             </div>
           </Container>
         </div>
