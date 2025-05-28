@@ -84,7 +84,11 @@ const menuData = {
       href: "/activities/transparency",
       children: [
         {
-          title: "Стратеги төлөвлөгөө, тайлан",
+          title: "Бодлогын баримт бичиг, хууль тогтоомж",
+          href: "/activities/transparency/finance",
+        },
+        {
+          title: "Стратеги төлөвлөгөө",
           href: "/activities/transparency/hr",
         },
         {
@@ -92,15 +96,11 @@ const menuData = {
           href: "/activities/transparency/finance",
         },
         {
-          title: "Бодлогын баримт бичиг, хууль тогтоомж",
+          title: "Худалдан авалтын статистик мэдээ",
           href: "/activities/transparency/finance",
         },
         {
           title: "Өргөдөл, гомдлын шийдвэрлэлт тайлан",
-          href: "/activities/transparency/finance",
-        },
-        {
-          title: "Статистик мэдээ",
           href: "/activities/transparency/finance",
         },
         {
@@ -110,11 +110,19 @@ const menuData = {
       ],
     },
     {
-      title: "Хүний нөөцийн ил тод байдал",
+      title: "Хүний нөөц",
       href: "/activities/transparency/hr",
       children: [
         {
-          title: "Хүний нөөцийн ил тод байдал",
+          title: "Төлөвлөгөө",
+          href: "/activities/transparency/hr",
+        },
+        {
+          title: "Тайлан",
+          href: "/activities/transparency/hr",
+        },
+        {
+          title: "Статистик мэдээ",
           href: "/activities/transparency/hr",
         },
       ],
@@ -130,15 +138,23 @@ const menuData = {
       ],
     },
     {
-      title: "Хяналт шалгалт, хянаалт-шинжилгээ, үнэлгээ",
+      title: "Хяналт шалгалт",
       href: "/activities/monitoring",
       children: [
         {
-          title: "Хяналт, Шалгалтын тайлан, Дүгнэлт",
+          title: "Хяналт шалгалт",
           href: "/activities/monitoring/ethics",
         },
         {
-          title: "Хяналт-шинжилгээ үнэлгээ",
+          title: "Дотоод хяналт-шинжилгээ үнэлгээ",
+          href: "/activities/monitoring/ethics",
+        },
+        {
+          title: "Төрийн байгууллагын хяналт, дүгнэлт",
+          href: "/activities/monitoring/ethics",
+        },
+        {
+          title: "Захиалагчдад хийгдсэн хяналт, шалгалт, тайлан ",
           href: "/activities/monitoring/ethics",
         },
       ],
@@ -181,15 +197,7 @@ const menuData = {
       href: "/tender/results",
     },
     {
-      title: "Иргэн, аж ахуй эрхлэгч жагсаалт",
-      href: "/tender/list-of-suppliers",
-    },
-    {
-      title: "Засгийн газрын тогтоол",
-      href: "/tender/government-decrees",
-    },
-    {
-      title: "Хөндлөнгийн гишүүний жагсаалт",
+      title: "А3 гэрчилгээтэй хүний нөөц ",
       href: "/tender/independent-members",
     },
     {
@@ -197,12 +205,8 @@ const menuData = {
       href: "/tender/estore",
     },
     {
-      title: "Жишиг техникийн тодорхойлолт",
-      href: "/tender/specifications",
-    },
-    {
-      title: "Төлбөр төлөх дансны мэдээлэл",
-      href: "/tender/payment-info",
+      title: "Захиалагчдад зөвлөмж",
+      href: "/tender/suggest",
     },
   ],
 
@@ -218,6 +222,293 @@ const menuData = {
     {
       title: "Соён гэгээрүүлэх үйл ажиллагаа",
       href: "/anticorruption/education",
+    },
+  ],
+  province: [
+    {
+      title: "Алтанбулаг",
+      href: "/province/altanbulag",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/altanbulag/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/altanbulag/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Аргалант",
+      href: "/province/argalant",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/argalant/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/argalant/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Архуст",
+      href: "/province/arkhust",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/arkhust/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/arkhust/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Батсүмбэр",
+      href: "/province/batsumber",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/batsumber/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/batsumber/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Баян",
+      href: "/province/bayan",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/bayan/plans" },
+        { title: "Тендер шалгаруулалт", href: "/province/bayan/tender-result" },
+      ],
+    },
+    {
+      title: "Баяндэлгэр",
+      href: "/province/bayandelger",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/bayandelger/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/bayandelger/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Баянжаргалан",
+      href: "/province/bayanjargalan",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/bayanjargalan/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/bayanjargalan/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Баян-Өнжүүл",
+      href: "/province/bayan-unjul",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/bayan-unjul/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/bayan-unjul/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Баянхангай",
+      href: "/province/bayankhangai",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/bayankhangai/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/bayankhangai/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Баянцагаан",
+      href: "/province/bayantsagaan",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/bayantsagaan/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/bayantsagaan/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Баянцогт",
+      href: "/province/bayantsogt",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/bayantsogt/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/bayantsogt/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Баянчандмань",
+      href: "/province/bayanchandmani",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/bayanchandmani/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/bayanchandmani/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Борнуур",
+      href: "/province/bornuur",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/bornuur/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/bornuur/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Бүрэн",
+      href: "/province/buren",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/buren/plans" },
+        { title: "Тендер шалгаруулалт", href: "/province/buren/tender-result" },
+      ],
+    },
+    {
+      title: "Дэлгэрхаан",
+      href: "/province/delgerkhaan",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/delgerkhaan/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/delgerkhaan/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Жаргалант",
+      href: "/province/jargalant",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/jargalant/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/jargalant/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Заамар",
+      href: "/province/zaamar",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/zaamar/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/zaamar/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Зуунмод",
+      href: "/province/zuunmod",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/zuunmod/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/zuunmod/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Лүн",
+      href: "/province/lun",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/lun/plans" },
+        { title: "Тендер шалгаруулалт", href: "/province/lun/tender-result" },
+      ],
+    },
+    {
+      title: "Мөнгөнморьт",
+      href: "/province/mungunmorit",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/mungunmorit/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/mungunmorit/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Өндөрширээт",
+      href: "/province/undurshireet",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/undurshireet/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/undurshireet/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Сүмбэр",
+      href: "/province/sumber",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/sumber/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/sumber/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Сэргэлэн",
+      href: "/province/sergelen",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/sergelen/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/sergelen/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Угтаалцайдам",
+      href: "/province/ugtaaltsaidam",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/ugtaaltsaidam/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/ugtaaltsaidam/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Цээл",
+      href: "/province/tseel",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/tseel/plans" },
+        { title: "Тендер шалгаруулалт", href: "/province/tseel/tender-result" },
+      ],
+    },
+    {
+      title: "Эрдэнэ",
+      href: "/province/erdene",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/erdene/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/erdene/tender-result",
+        },
+      ],
+    },
+    {
+      title: "Эрдэнэсант",
+      href: "/province/erdenesant",
+      children: [
+        { title: "Төлөвлөгөө", href: "/province/erdenesant/plans" },
+        {
+          title: "Тендер шалгаруулалт",
+          href: "/province/erdenesant/tender-result",
+        },
+      ],
     },
   ],
 };
@@ -425,6 +716,8 @@ export const MenuBar = () => {
 
         <SimpleMenuSection title="Тендер" items={menuData.tender} />
 
+        <NestedMenuSection title="Сумд" categories={menuData.province} />
+
         <SimpleMenuSection
           title="Авилгын эсрэг"
           items={menuData.anticorruption}
@@ -497,6 +790,12 @@ export const MenuBar = () => {
               <MobileMenuSection
                 title="Тендер"
                 items={menuData.tender}
+                onClose={closeMobileMenu}
+              />
+
+              <MobileNestedMenuSection
+                title="Сумд"
+                categories={menuData.province}
                 onClose={closeMobileMenu}
               />
 
