@@ -534,8 +534,10 @@ const SimpleMenuSection = ({
 }) => {
   return (
     <MenubarMenu>
-      <MenubarTrigger className="cursor-pointer">{title}</MenubarTrigger>
-      <MenubarContent className="p-0">
+      <MenubarTrigger className="cursor-pointer font-normal uppercase">
+        {title}
+      </MenubarTrigger>
+      <MenubarContent className="p-0 font-normal uppercase">
         {items.map((item, index) => (
           <MenubarItem key={index}>
             <Link href={item.href}>{item.title}</Link>
@@ -555,8 +557,10 @@ const NestedMenuSection = ({
 }) => {
   return (
     <MenubarMenu>
-      <MenubarTrigger className="cursor-pointer">{title}</MenubarTrigger>
-      <MenubarContent className="p-0">
+      <MenubarTrigger className="cursor-pointer font-normal uppercase">
+        {title}
+      </MenubarTrigger>
+      <MenubarContent className="p-0 font-normal uppercase">
         {categories.map((category, index) => (
           <MenubarSub key={index}>
             <MenubarSubTrigger className="cursor-pointer">
@@ -648,7 +652,7 @@ const MobileNestedMenuSection = ({
         className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-gray-100"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="font-medium">{title}</span>
+        <span className="font-normal">{title}</span>
         {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
       </button>
       {isOpen && (
@@ -696,9 +700,9 @@ export const MenuBar = () => {
 
   return (
     <>
-      <Menubar className="hidden lg:flex w-fit border-none shadow-none">
+      <Menubar className="hidden lg:flex w-fit border-none shadow-none font-normal uppercase bg-transparent">
         <MenubarMenu>
-          <div className="hover:bg-accent hover:text-accent-foreground flex items-center rounded-sm px-2 py-1 text-sm font-medium outline-hidden select-none">
+          <div className="hover:bg-accent hover:text-accent-foreground  font-normal flex items-center rounded-sm px-2 py-1 text-sm outline-hidden select-none">
             <Link href="/">Нүүр хуудас</Link>
           </div>
         </MenubarMenu>
@@ -724,7 +728,7 @@ export const MenuBar = () => {
         />
 
         <MenubarMenu>
-          <div className="hover:bg-accent hover:text-accent-foreground flex items-center rounded-sm px-2 py-1 text-sm font-medium outline-hidden select-none">
+          <div className="hover:bg-accent hover:text-accent-foreground flex items-center rounded-sm px-2 py-1 text-sm font-normal outline-hidden select-none">
             <Link href="/contact">Холбоо барих</Link>
           </div>
         </MenubarMenu>
@@ -741,7 +745,7 @@ export const MenuBar = () => {
       </div>
 
       {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50">
+        <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50 uppercase">
           <div className="fixed inset-y-0 left-0 w-80 max-w-full bg-white shadow-xl">
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <h2 className="text-lg font-semibold">Цэс</h2>
@@ -757,7 +761,7 @@ export const MenuBar = () => {
             <div className="overflow-y-auto h-full pb-20">
               <Link
                 href="/"
-                className="block px-4 py-3 text-sm font-medium hover:bg-gray-100 border-b border-gray-200"
+                className="block px-4 py-3 text-sm font-normal hover:bg-gray-100 border-b border-gray-200"
                 onClick={closeMobileMenu}
               >
                 Нүүр хуудас
@@ -807,7 +811,7 @@ export const MenuBar = () => {
 
               <Link
                 href="/contact"
-                className="block px-4 py-3 text-sm font-medium hover:bg-gray-100 border-b border-gray-200"
+                className="block px-4 py-3 text-sm font-normal hover:bg-gray-100 border-b border-gray-200"
                 onClick={closeMobileMenu}
               >
                 Холбоо барих

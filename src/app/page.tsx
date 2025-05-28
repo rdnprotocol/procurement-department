@@ -56,6 +56,16 @@ export default function Home() {
               <div className="absolute inset-0 bg-[url('/tumen-nasan.png')] bg-repeat bg-[length:36%_auto] opacity-10 pointer-events-none" />
               <div className="relative p-3 flex items-center text-xl gap-4">
                 <Newspaper />
+                <p className="uppercase">Түгээмэл асуулт, хариулт</p>
+              </div>
+            </div>
+            <FAQs />
+          </div>
+          <div className="col-span-3 lg:col-span-2  border border-[#24276B] rounded-lg overflow-hidden">
+            <div className="relative bg-[#24276B] text-white font-bold text-xs">
+              <div className="absolute inset-0 bg-[url('/tumen-nasan.png')] bg-repeat bg-[length:36%_auto] lg:bg-[length:18%_auto] opacity-10 pointer-events-none" />
+              <div className="relative p-3 flex items-center text-xl gap-4">
+                <Newspaper />
                 <p className="uppercase">Тендерийн урилга</p>
               </div>
             </div>
@@ -65,16 +75,6 @@ export default function Home() {
               href="/"
               date="2025-20-20"
             />
-          </div>
-          <div className="col-span-3 lg:col-span-2  border border-[#24276B] rounded-lg overflow-hidden">
-            <div className="relative bg-[#24276B] text-white font-bold text-xs">
-              <div className="absolute inset-0 bg-[url('/tumen-nasan.png')] bg-repeat bg-[length:36%_auto] lg:bg-[length:18%_auto] opacity-10 pointer-events-none" />
-              <div className="relative p-3 flex items-center text-xl gap-4">
-                <Newspaper />
-                <p className="uppercase">Түгээмэл асуулт, хариулт</p>
-              </div>
-            </div>
-            <FAQs />
           </div>
           <div className="col-span-3 border border-[#24276B] rounded-lg overflow-hidden">
             <div className="relative bg-[#24276B] text-white font-bold text-xs">
