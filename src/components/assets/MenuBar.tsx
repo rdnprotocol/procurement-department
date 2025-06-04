@@ -32,49 +32,49 @@ const menuData = {
       href: "/about/history",
     },
   ],
-
+  // Green
   law: [
     {
       title: "Худалдан авах ажиллагааны талаар хууль тогтоомж",
-      href: "/law/procurement",
+      href: "https://www.tender.gov.mn/mn/document/list",
       children: [
         {
           title: "Хууль тогтоомж",
-          href: "/law/procurement/laws",
+          href: "https://www.tender.gov.mn/mn/document/list",
         },
         {
           title: "Жишиг баримт бичиг",
-          href: "/law/procurement/templates",
+          href: "/category/huuli-togtoomj",
         },
       ],
     },
     {
       title: "Байгууллагын үйл ажиллагаанд хамаарах хууль тогтоомж",
-      href: "/law/organization",
+      href: "/category/baiguullagiin-huuli-togtoomj",
       children: [
         {
           title: "Хууль тогтоомж",
           description:
             "Байгууллагын үйл ажиллагаанд хамаарах хууль тогтоомжууд",
-          href: "/law/organization/laws",
+          href: "/category/baiguullagiin-huuli-togtoomj",
         },
         {
           title: "Газрын даргын тушаал",
           description: "Газрын даргын гаргасан тушаал, шийдвэрүүд",
-          href: "/law/organization/orders",
+          href: "/category/dargiin-tushaal",
         },
       ],
     },
   ],
-
+  // Green
   news: [
     {
       title: "Үйл явдлын мэдээ",
-      href: "/news/events",
+      href: "/category/uil-yvdliin-medee",
     },
     {
       title: "Видео мэдээ",
-      href: "/news/videos",
+      href: "/category/video-medee",
     },
   ],
 
@@ -85,19 +85,19 @@ const menuData = {
       children: [
         {
           title: "Бодлогын баримт бичиг, хууль тогтоомж",
-          href: "/activities/transparency/finance",
+          href: "/category/strateg-tolovlogoo-tailan",
         },
         {
           title: "Стратеги төлөвлөгөө",
-          href: "/activities/transparency/hr",
+          href: "/category/strateg-tolovlogoo",
         },
         {
           title: "Төлөвлөгөө, тайлан",
-          href: "/activities/transparency/finance",
+          href: "/category/tolovlogoo-tailan",
         },
         {
           title: "Худалдан авалтын статистик мэдээ",
-          href: "/activities/transparency/finance",
+          href: "/category/statistic",
         },
         {
           title: "Өргөдөл, гомдлын шийдвэрлэлт тайлан",
@@ -129,11 +129,11 @@ const menuData = {
     },
     {
       title: "Санхүүгийн ил тод байдал",
-      href: "/activities/transparency/finance",
+      href: "/https://shilendans.gov.mn/organization",
       children: [
         {
           title: "Шилэн данс",
-          href: "/activities/transparency/finance",
+          href: "/https://shilendans.gov.mn/organization/20081?ry=2025",
         },
       ],
     },
@@ -165,11 +165,11 @@ const menuData = {
       children: [
         {
           title: "Хууль, Журам",
-          href: "/activities/monitoring/ethics",
+          href: "https://ec.gov.mn/law",
         },
         {
           title: "Ажиллах Журам",
-          href: "/activities/monitoring/ethics",
+          href: "https://ec.gov.mn/shiidver",
         },
         {
           title: "Үйл ажиллагаа",
@@ -190,19 +190,19 @@ const menuData = {
     },
     {
       title: "Тендерийн урилга",
-      href: "/tender/invitation",
+      href: "https://www.tender.gov.mn/mn/invitation",
     },
     {
       title: "Тендер шалгаруулалтын үр дүн",
-      href: "/tender/results",
+      href: "https://user.tender.gov.mn/mn/result/",
     },
     {
-      title: "А3 гэрчилгээтэй хүний нөөц ",
-      href: "/tender/independent-members",
+      title: "А3 гэрчилгээтэй хүний нөөц",
+      href: "https://user.tender.gov.mn/mn/bidder/list",
     },
     {
       title: "Цахим дэлгүүр",
-      href: "/tender/estore",
+      href: "https://www.tender.gov.mn/mn/eshop",
     },
     {
       title: "Захиалагчдад зөвлөмж",

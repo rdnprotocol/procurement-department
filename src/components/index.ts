@@ -5,3 +5,4 @@ export * from "./Feedback";
 export * from "./FAQs";
 export * from "./NewsSub";
 export * from "./HighlightNews";
+export * from "./PDFViewer";

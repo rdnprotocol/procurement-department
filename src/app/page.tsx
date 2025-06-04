@@ -20,7 +20,7 @@ export default function Home() {
               title="Зайсангийн зүүн гүүрийг шинээр барих ажлын явц 85 хувьтай байна"
               href="/"
               image="/news-image-1.jpg"
-              date="2025-20-20"
+              date="2025-06-11T16:00:00.000Z"
             />
           </div>
           <div className="col-span-3 lg:col-span-1  border border-[#24276B] rounded-lg overflow-hidden">
@@ -36,19 +36,19 @@ export default function Home() {
               title="Зайсангийн зүүн гүүрийг шинээр барих ажлын явц 85 хувьтай байна"
               href="/"
               image="/news-image-1.jpg"
-              date="2025-20-20"
+              date="2025-06-11T16:00:00.000Z"
             />
             <NewsSub
               notImage={false}
               title="Зайсангийн зүүн гүүрийг шинээр барих ажлын явц 85 хувьтай байна"
               href="/"
-              date="2025-20-20"
+              date="2025-06-11T16:00:00.000Z"
             />
             <NewsSub
               notImage={false}
               title="Зайсангийн зүүн гүүрийг шинээр барих ажлын явц 85 хувьтай байна"
               href="/"
-              date="2025-20-20"
+              date="2025-06-11T16:00:00.000Z"
             />
           </div>
           <div className="col-span-3 lg:col-span-1  border border-[#24276B] rounded-lg overflow-hidden">
@@ -73,7 +73,7 @@ export default function Home() {
               notImage={false}
               title="Зайсангийн зүүн гүүрийг шинээр барих ажлын явц 85 хувьтай байна"
               href="/"
-              date="2025-20-20"
+              date="2025-06-11T16:00:00.000Z"
             />
           </div>
           <div className="col-span-3 border border-[#24276B] rounded-lg overflow-hidden">
