@@ -1,9 +1,9 @@
 "use client";
-import { NewsSub } from "@/components";
+import { NewsSub, Path } from "@/components";
 import { Container, Loading } from "@/components/assets";
 import { Calendar } from "@/components/ui/calendar";
 import { Separator } from "@/components/ui/separator";
-import { GetIdByHref } from "@/utils/category";
+import { GetIdByHref, GetMongolianNameByHref } from "@/utils/category";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -87,36 +87,45 @@ export default function CategoryDetailsPage() {
   }
 
   return (
-    <Container>
-      <div className="grid grid-cols-3 my-12">
-        <div className="col-span-2 flex w-full gap-8">
-          <div className="space-y-6 w-full">
-            {contents?.map((content) => {
-              return (
-                <NewsSub
-                  key={content.id}
-                  notImage={false}
-                  image={content.banner_image}
-                  title={content.title}
-                  href={`/news/${content.id}`}
-                  date={content.created_date}
-                />
-              );
-            })}
+    <>
+      <Path path={GetMongolianNameByHref(id) || "Үйл явдлын мэдээ"} />
+      <Container>
+        <div className="grid grid-cols-3 my-12">
+          <div className="col-span-2 flex w-full gap-8">
+            <div className="space-y-6 w-full">
+              {contents.length > 0 ? (
+                contents.map((content) => {
+                  return (
+                    <NewsSub
+                      key={content.id}
+                      notImage={false}
+                      image={content.banner_image}
+                      title={content.title}
+                      href={`/news/${content.id}`}
+                      date={content.created_date}
+                    />
+                  );
+                })
+              ) : (
+                <div className="w-full text-center text-lg">
+                  Мэдээ нийтлэгдээгүй байна.
+                </div>
+              )}
+            </div>
+            <Separator orientation="vertical" />
           </div>
-          <Separator orientation="vertical" />
-        </div>
-        <div className="col-span-1 pl-8">
-          <Calendar
-            mode="single"
-            selected={date}
-            className="rounded-md border shadow-sm w-fit"
-          />
-          <div>
-            <p>Шинээр нэмэгдсэн</p>
+          <div className="col-span-1 pl-8">
+            <Calendar
+              mode="single"
+              selected={date}
+              className="rounded-md border shadow-sm w-fit"
+            />
+            <div>
+              <p>Шинээр нэмэгдсэн</p>
+            </div>
           </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </>
   );
 }

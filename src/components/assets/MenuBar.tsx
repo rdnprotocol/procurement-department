@@ -40,11 +40,11 @@ const menuData = {
       children: [
         {
           title: "Хууль тогтоомж",
-          href: "https://www.tender.gov.mn/mn/document/list",
+          href: "/category/huuli-togtoomj",
         },
         {
           title: "Жишиг баримт бичиг",
-          href: "/category/huuli-togtoomj",
+          href: "https://www.tender.gov.mn/mn/document/list",
         },
       ],
     },
@@ -182,11 +182,11 @@ const menuData = {
       ],
     },
   ],
-
+  // Yellow
   tender: [
     {
       title: "Төлөвлөгөө, тайлан",
-      href: "/tender/plans",
+      href: "/category/tolovlogoo-tailan",
     },
     {
       title: "Тендерийн урилга",
@@ -198,7 +198,8 @@ const menuData = {
     },
     {
       title: "А3 гэрчилгээтэй хүний нөөц",
-      href: "https://user.tender.gov.mn/mn/bidder/list",
+      href: "/",
+      //news/id
     },
     {
       title: "Цахим дэлгүүр",
@@ -206,24 +207,25 @@ const menuData = {
     },
     {
       title: "Захиалагчдад зөвлөмж",
-      href: "/tender/suggest",
+      href: "/",
     },
   ],
-
+  // Green
   anticorruption: [
     {
       title: "Төлөвлөгөө, тайлан",
-      href: "/anticorruption/plans",
+      href: "/category/at-tolovlogoo-tailan",
     },
     {
       title: "Хасум хянасан дүгнэлт",
-      href: "/anticorruption/reviews",
+      href: "/category/hasum-report",
     },
     {
       title: "Соён гэгээрүүлэх үйл ажиллагаа",
-      href: "/anticorruption/education",
+      href: "https://iaac.mn/19/video",
     },
   ],
+
   province: [
     {
       title: "Алтанбулаг",

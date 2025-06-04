@@ -1,8 +1,7 @@
 import { Container } from "@/components/assets";
 import { Newspaper } from "lucide-react";
-import React from "react";
 
-export default function GoalPage() {
+export default function StructurePage() {
   return (
     <Container>
       <main className="p-6">
