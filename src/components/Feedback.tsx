@@ -42,10 +42,8 @@ export const Feedback = () => {
     onSubmit: async (values, { resetForm }) => {
       setIsLoading(true);
       try {
-        // Simulate API call - Replace with your actual API endpoint
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        // Example API call:
         // const response = await fetch('/api/contact', {
         //   method: 'POST',
         //   headers: { 'Content-Type': 'application/json' },

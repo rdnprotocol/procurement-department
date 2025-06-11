@@ -1,8 +1,54 @@
+"use client";
 import { FAQs, Feedback, HighlightNews, NewsSub } from "@/components";
-import { Container } from "@/components/assets";
+import { Container, Loading } from "@/components/assets";
 import { Newspaper } from "lucide-react";
+import { useEffect, useState } from "react";
+
+interface ContentItem {
+  id: number;
+  text: string;
+  image: string;
+}
+interface ContentData {
+  id: number;
+  title: string;
+  banner_image: string;
+  created_date: string;
+  category_id: number;
+  items: ContentItem[];
+}
 
 export default function Home() {
+  const [contents, setContents] = useState<ContentData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getContents();
+  }, []);
+
+  async function getContents() {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/content", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) {
+        return;
+      }
+
+      const data: ContentData[] = await res.json();
+      setContents(data);
+    } catch (err) {
+      console.error("Error fetching content:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <Container>
       <main className="py-6">
@@ -17,10 +63,10 @@ export default function Home() {
             </div>
             <HighlightNews
               notImage={false}
-              title="Зайсангийн зүүн гүүрийг шинээр барих ажлын явц 85 хувьтай байна"
-              href="/"
-              image="/news-image-1.jpg"
-              date="2025-06-11T16:00:00.000Z"
+              title={contents[contents.length - 1].title}
+              href={`/news/${contents[contents.length - 1].id}`}
+              image={contents[contents.length - 1].banner_image}
+              date={contents[contents.length - 1].created_date}
             />
           </div>
           <div className="col-span-3 lg:col-span-1  border border-[#24276B] rounded-lg overflow-hidden">
@@ -31,25 +77,19 @@ export default function Home() {
                 <p className="uppercase">Үйл явдлын мэдээ</p>
               </div>
             </div>
-            <NewsSub
-              notImage={false}
-              title="Зайсангийн зүүн гүүрийг шинээр барих ажлын явц 85 хувьтай байна"
-              href="/"
-              image="/news-image-1.jpg"
-              date="2025-06-11T16:00:00.000Z"
-            />
-            <NewsSub
-              notImage={false}
-              title="Зайсангийн зүүн гүүрийг шинээр барих ажлын явц 85 хувьтай байна"
-              href="/"
-              date="2025-06-11T16:00:00.000Z"
-            />
-            <NewsSub
-              notImage={false}
-              title="Зайсангийн зүүн гүүрийг шинээр барих ажлын явц 85 хувьтай байна"
-              href="/"
-              date="2025-06-11T16:00:00.000Z"
-            />
+            {contents
+              .slice(-3)
+              .reverse()
+              .map((item) => (
+                <NewsSub
+                  key={item.id}
+                  notImage={false}
+                  title={item.title}
+                  href={`/news/${item.id}`}
+                  image={item.banner_image}
+                  date={item.created_date}
+                />
+              ))}
           </div>
           <div className="col-span-3 lg:col-span-1  border border-[#24276B] rounded-lg overflow-hidden">
             <div className="relative bg-[#24276B] text-white font-bold text-xs">

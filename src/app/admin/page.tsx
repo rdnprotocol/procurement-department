@@ -2,6 +2,7 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import Link from "next/link";
+import { AdminContentsTable } from "@/components";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
@@ -47,6 +48,7 @@ export default async function AdminPage() {
     <div className="p-4">
       <h1 className="text-xl font-bold">Admin Dashboard</h1>
       <p>Welcome, {user.email}!</p>
+      <AdminContentsTable />
     </div>
   );
 }

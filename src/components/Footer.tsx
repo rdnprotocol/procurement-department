@@ -10,7 +10,10 @@ export const Footer = () => {
       <div className="absolute inset-0 bg-[url('/tumen-nasan.png')] bg-repeat bg-[length:12%_auto] opacity-10 pointer-events-none" />
       <div className="relative pb-4 lg:h-80">
         <Container className="flex flex-col justify-between h-full">
-          <div className="flex lg:flex-row flex-col gap-4 mt-10 mb-4">
+          <div
+            id="contact"
+            className="flex lg:flex-row flex-col gap-4 mt-10 mb-4"
+          >
             <div className="flex flex-col items-center">
               <div className="flex flex-col items-center text-center gap-2">
                 <Image

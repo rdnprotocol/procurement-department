@@ -7,3 +7,5 @@ export * from "./NewsSub";
 export * from "./HighlightNews";
 export * from "./PDFViewer";
 export * from "./Path";
+export * from "./CreateContent";
+export * from "./AdminContentsTable";

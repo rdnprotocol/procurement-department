@@ -59,3 +59,60 @@ export async function GET() {
     );
   }
 }
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+
+    const { title, banner_image, created_date, category_id, items } = body;
+
+    if (!title || !created_date || !category_id) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const client = await pool.connect();
+
+    const insertContentQuery = `
+      INSERT INTO content (title, banner_image, created_date, category_id)
+      VALUES ($1, $2, $3, $4)
+      RETURNING id
+    `;
+
+    const contentRes = await client.query(insertContentQuery, [
+      title,
+      banner_image,
+      created_date,
+      category_id,
+    ]);
+
+    const contentId = contentRes.rows[0].id;
+
+    if (Array.isArray(items) && items.length > 0) {
+      const insertItemQuery = `
+        INSERT INTO content_item (content_id, text, image)
+        VALUES ($1, $2, $3)
+      `;
+
+      for (const item of items) {
+        await client.query(insertItemQuery, [
+          contentId,
+          item.text || null,
+          item.image || null,
+        ]);
+      }
+    }
+
+    client.release();
+
+    return NextResponse.json({ message: "Content created", id: contentId });
+  } catch (error) {
+    console.error("POST error:", error);
+    return NextResponse.json(
+      { error: "Failed to create content" },
+      { status: 500 }
+    );
+  }
+}

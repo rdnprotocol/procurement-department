@@ -39,7 +39,7 @@ export const Category = [
     href: "at-tolovlogoo-tailan",
     mongolian_name: "Төлөвлөгөө, тайлан",
   },
-  { id: 9, href: "hasum-report", mongolian_namemongolian: "ХАСУМ" },
+  { id: 9, href: "hasum-report", mongolian_name: "ХАСУМ" },
 ];
 
 export const GetCategoryById = (id: number) => {

@@ -731,7 +731,7 @@ export const MenuBar = () => {
 
         <MenubarMenu>
           <div className="hover:bg-accent hover:text-accent-foreground flex items-center rounded-sm px-2 py-1 text-xs font-normal outline-hidden select-none">
-            <Link href="/contact">Холбоо барих</Link>
+            <Link href="#contact">Холбоо барих</Link>
           </div>
         </MenubarMenu>
       </Menubar>
@@ -812,7 +812,7 @@ export const MenuBar = () => {
               />
 
               <Link
-                href="/contact"
+                href="#contact"
                 className="block px-4 py-3 text-xs font-normal hover:bg-gray-100 border-b border-gray-200"
                 onClick={closeMobileMenu}
               >

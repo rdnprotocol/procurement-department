@@ -31,7 +31,7 @@ export const HighlightNews = ({
         <div className="absolute inset-0 group-hover:bg-black/30 transition duration-300" />
 
         <div className="absolute bottom-16 left-4 right-4 text-white bg-gradient-to-t from-black/70 to-transparent p-4 rounded-md">
-          <p className="text-sm">{date}</p>
+          <p className="text-sm">{new Date(date).toISOString().slice(0, 10)}</p>
           <h2 className="text-xl font-semibold leading-tight">{title}</h2>
         </div>
       </div>
