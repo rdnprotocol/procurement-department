@@ -21,6 +21,7 @@ import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import NextImage from "next/image";
 import { Category } from "@/utils/category";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -172,9 +173,9 @@ export const CreateContent = () => {
   };
 
   const getFileIcon = (fileType: "image" | "pdf" | null) => {
-    if (fileType === "pdf") return <FileText className="w-4 h-4" />;
-    if (fileType === "image") return <Image className="w-4 h-4" />;
-    return <Upload className="w-4 h-4" />;
+    if (fileType === "pdf") return <FileText className="w-4 h-4" aria-label="PDF file" />;
+    if (fileType === "image") return <Image className="w-4 h-4" aria-label="Image file" />;
+    return <Upload className="w-4 h-4" aria-label="Upload file" />;
   };
 
   const getFileTypeText = (fileType: "image" | "pdf" | null) => {
@@ -412,9 +413,11 @@ export const CreateContent = () => {
                             </span>
                             {item.file_type === "image" && (
                               <div className="w-10 h-10 rounded border overflow-hidden">
-                                <img
+                                <NextImage
                                   src={item.image}
                                   alt="Preview"
+                                  width={40}
+                                  height={40}
                                   className="w-full h-full object-cover"
                                 />
                               </div>

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getValidImagePath } from "@/utils/imageUtils";
 
 type HighlightNewsProps = {
   notImage: boolean;
@@ -21,7 +22,7 @@ export const HighlightNews = ({
       <div className="relative w-full h-full cursor-pointer overflow-hidden group">
         {!notImage && (
           <Image
-            src={image || "/file.jpg"}
+            src={getValidImagePath(image)}
             fill
             alt={title}
             className="object-cover transition-transform duration-300 group-hover:scale-110"

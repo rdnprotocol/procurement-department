@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getValidImagePath } from "@/utils/imageUtils";
 
 type NewsSubProps = {
   notImage: boolean;
@@ -24,7 +25,7 @@ export const NewsSub = ({
         {!notImage && (
           <div className="flex-shrink-0">
             <Image
-              src={image || "/file.jpg"}
+              src={getValidImagePath(image)}
               width={180}
               height={120}
               alt={title}

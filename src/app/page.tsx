@@ -49,6 +49,19 @@ export default function Home() {
   if (loading) {
     return <Loading />;
   }
+
+  if (!contents || contents.length === 0) {
+    return (
+      <Container>
+        <main className="py-6">
+          <div className="text-center text-gray-500">
+            <p>Мэдээ байхгүй байна...</p>
+          </div>
+        </main>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       <main className="py-6">
@@ -63,10 +76,10 @@ export default function Home() {
             </div>
             <HighlightNews
               notImage={false}
-              title={contents[contents.length - 1].title}
-              href={`/news/${contents[contents.length - 1].id}`}
-              image={contents[contents.length - 1].banner_image}
-              date={contents[contents.length - 1].created_date}
+              title={contents[contents.length - 1]?.title || 'Мэдээ байхгүй'}
+              href={`/news/${contents[contents.length - 1]?.id || '#'}`}
+              image={contents[contents.length - 1]?.banner_image}
+              date={contents[contents.length - 1]?.created_date || new Date().toISOString()}
             />
           </div>
           <div className="col-span-3 lg:col-span-1  border border-[#24276B] rounded-lg overflow-hidden">

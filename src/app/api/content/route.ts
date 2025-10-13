@@ -3,8 +3,9 @@ import pool from "@/utils/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
+  let client;
   try {
-    const client = await pool.connect();
+    client = await pool.connect();
 
     const result = await client.query(`
       SELECT 
@@ -20,8 +21,6 @@ export async function GET() {
       LEFT JOIN content_item ci ON c.id = ci.content_id
       ORDER BY c.created_date DESC
     `);
-
-    client.release();
 
     // Group content with their items
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,11 +51,16 @@ export async function GET() {
 
     return NextResponse.json(contentList);
   } catch (error) {
-    console.error("GET error:", error);
+    console.error("❌ Content API error:", error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return NextResponse.json(
-      { error: "Failed to fetch content" },
+      { error: "Failed to fetch content", details: errorMessage },
       { status: 500 }
     );
+  } finally {
+    if (client) {
+      client.release();
+    }
   }
 }
 

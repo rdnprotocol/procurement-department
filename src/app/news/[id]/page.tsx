@@ -7,7 +7,7 @@ import { GetMongolianNameById } from "@/utils/category";
 import { Clock, Folder } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface ContentItem {
   id: number;
@@ -34,13 +34,7 @@ export default function NewsDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (id) {
-      getContent();
-    }
-  }, [id]);
-
-  async function getContent() {
+  const getContent = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch(`/api/content/${id}`, {
@@ -63,7 +57,13 @@ export default function NewsDetailsPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [id, router]);
+
+  useEffect(() => {
+    if (id) {
+      getContent();
+    }
+  }, [id, getContent]);
 
   if (loading) {
     return <Loading />;

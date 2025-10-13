@@ -5,7 +5,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Separator } from "@/components/ui/separator";
 import { GetIdByHref, GetMongolianNameByHref } from "@/utils/category";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface ContentItem {
   id: number;
@@ -32,7 +32,7 @@ export default function CategoryDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  async function getCategoryData() {
+  const getCategoryData = useCallback(async () => {
     try {
       const categoryId = GetIdByHref(id);
       if (!categoryId) {
@@ -60,13 +60,13 @@ export default function CategoryDetailsPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [id, router]);
 
   useEffect(() => {
     if (id) {
       getCategoryData();
     }
-  }, [id]);
+  }, [id, getCategoryData]);
 
   if (loading) {
     return <Loading />;
