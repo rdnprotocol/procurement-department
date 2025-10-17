@@ -142,10 +142,6 @@ const menuData = {
       href: "/activities/monitoring",
       children: [
         {
-          title: "Хяналт шалгалт",
-          href: "/activities/monitoring/ethics",
-        },
-        {
           title: "Дотоод хяналт-шинжилгээ үнэлгээ",
           href: "/activities/monitoring/ethics",
         },
