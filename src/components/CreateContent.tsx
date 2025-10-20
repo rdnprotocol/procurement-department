@@ -117,59 +117,72 @@ export const CreateContent = () => {
     field: string,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files?.[0];
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
 
-    if (!file) return;
+      const formData = new FormData();
+      formData.append("file", file);
 
-    const formData = new FormData();
-    formData.append("file", file);
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Upload failed");
+      }
 
-    if (!res.ok) {
-      const error = await res.text();
-      alert("Upload failed: " + error);
-      return;
+      const result = await res.json();
+      if (!result.success) {
+        throw new Error(result.message || "Upload failed");
+      }
+
+      createContentForm.setFieldValue(field, result.url);
+    } catch (error) {
+      console.error("File upload error:", error);
+      alert(error instanceof Error ? error.message : "Upload failed");
     }
-
-    const result = await res.json();
-
-    createContentForm.setFieldValue(field, result.url);
   };
 
   const handleItemFileUpload = async (
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
+      const formData = new FormData();
+      formData.append("file", file);
 
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-    if (!res.ok) {
-      const error = await res.text();
-      alert("Upload failed: " + error);
-      return;
-    }
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Upload failed");
+      }
 
-    const result = await res.json();
+      const result = await res.json();
+      if (!result.success) {
+        throw new Error(result.message || "Upload failed");
+      }
 
-    const newItems = [...createContentForm.values.items];
-    newItems[index] = {
-      ...newItems[index],
-      image: result.url,
-      file_type: result.type,
+      const newItems = [...createContentForm.values.items];
+      newItems[index] = {
+        ...newItems[index],
+        image: result.url,
+        file_type: result.type,
+      };
+      createContentForm.setFieldValue("items", newItems);
+    } catch (error) {
+      console.error("File upload error:", error);
+      alert(error instanceof Error ? error.message : "Upload failed");
     };
-    createContentForm.setFieldValue("items", newItems);
   };
 
   const getFileIcon = (fileType: "image" | "pdf" | null) => {

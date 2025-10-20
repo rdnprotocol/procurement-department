@@ -24,10 +24,13 @@ interface ContentItem {
 interface ContentData {
   id: number;
   title: string;
+  description: string;
+  content: string;
   banner_image: string;
+  type: string;
+  status: string;
   created_date: string;
-  category_id: number;
-  items: ContentItem[];
+  category_id: number | null;
 }
 export const AdminContentsTable = () => {
   const [contents, setContents] = useState<ContentData[]>([]);
@@ -40,13 +43,13 @@ export const AdminContentsTable = () => {
   async function getContents() {
     try {
       setLoading(true);
-      const res = await fetch("/api/category/1", {
+      const res = await fetch("/api/content", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
 
       if (!res.ok) {
-        return;
+        throw new Error('Failed to fetch contents');
       }
 
       const data: ContentData[] = await res.json();
@@ -61,9 +64,10 @@ export const AdminContentsTable = () => {
     return <Loading />;
   }
 
-  const getCategoryNameById = (id: number): string | undefined => {
+  const getCategoryNameById = (id: number | null): string => {
+    if (!id) return 'Ангилалгүй';
     const category = Category.find((cat) => cat.id === id);
-    return category?.mongolian_name;
+    return category?.mongolian_name || 'Тодорхойгүй';
   };
   return (
     <Container>
@@ -85,12 +89,25 @@ export const AdminContentsTable = () => {
               <TableCell className="font-medium">{content.id}</TableCell>
               <TableCell className="font-medium">
                 <div className="relative w-8 h-8">
-                  <Image
-                    src={content.banner_image || "/file.jpg"}
-                    alt={`content-image-${content.id}`}
-                    fill
-                    className="w-full h-auto rounded object-cover"
-                  />
+                  {content.banner_image ? (
+                    <Image
+                      src={content.banner_image}
+                      alt={`content-image-${content.id}`}
+                      fill
+                      className="w-full h-auto rounded object-cover"
+                      onError={(e) => {
+                        const img = e.target as HTMLImageElement;
+                        img.src = "/placeholder.png"; // Placeholder зургийн зам
+                      }}
+                    />
+                  ) : (
+                    <Image
+                      src="/placeholder.png" // Placeholder зургийн зам
+                      alt="No image"
+                      fill
+                      className="w-full h-auto rounded object-cover"
+                    />
+                  )}
                 </div>
               </TableCell>
               <TableCell className="max-w-96 truncate">

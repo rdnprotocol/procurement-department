@@ -1,55 +1,49 @@
 // app/api/content/route.ts
-import pool from "@/utils/db";
+import { createSupabaseServerClient } from "@/lib/supabaseClient";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  let client;
   try {
-    client = await pool.connect();
+    // Check environment variables first
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-    const result = await client.query(`
-      SELECT 
-        c.id AS content_id,
-        c.title,
-        c.banner_image,
-        c.created_date,
-        c.category_id,
-        ci.id AS item_id,
-        ci.text,
-        ci.image
-      FROM content c
-      LEFT JOIN content_item ci ON c.id = ci.content_id
-      ORDER BY c.created_date DESC
-    `);
-
-    // Group content with their items
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const contentMap: { [key: number]: any } = {};
-
-    result.rows.forEach((row) => {
-      if (!contentMap[row.content_id]) {
-        contentMap[row.content_id] = {
-          id: row.content_id,
-          title: row.title,
-          banner_image: row.banner_image,
-          created_date: row.created_date,
-          category_id: row.category_id,
-          items: [],
-        };
-      }
-
-      if (row.item_id) {
-        contentMap[row.content_id].items.push({
-          id: row.item_id,
-          text: row.text,
-          image: row.image,
-        });
-      }
+    console.log('Debug: Checking Supabase config:', {
+      hasUrl: !!supabaseUrl,
+      urlPrefix: supabaseUrl?.substring(0, 10),
+      hasKey: !!supabaseKey,
+      keyLength: supabaseKey?.length
     });
 
-    const contentList = Object.values(contentMap);
+    if (!supabaseUrl || !supabaseKey) {
+      console.error("❌ Missing Supabase credentials:", {
+        hasUrl: !!supabaseUrl,
+        hasKey: !!supabaseKey
+      });
+      return NextResponse.json(
+        { 
+          error: "Supabase configuration missing", 
+          details: "Please check .env.local configuration" 
+        },
+        { status: 500 }
+      );
+    }
 
-    return NextResponse.json(contentList);
+    console.log('Debug: Creating Supabase client...');
+    const supabase = createSupabaseServerClient();
+
+    // Get all news content
+    const { data: content, error: contentError } = await supabase
+      .from('content')
+      .select('*')
+      .eq('type', 'news')
+      .order('created_date', { ascending: false });
+
+    if (contentError) {
+      throw contentError;
+    }
+
+    return NextResponse.json(content);
   } catch (error) {
     console.error("❌ Content API error:", error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -57,65 +51,82 @@ export async function GET() {
       { error: "Failed to fetch content", details: errorMessage },
       { status: 500 }
     );
-  } finally {
-    if (client) {
-      client.release();
-    }
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const body = await req.json();
+    const supabase = createSupabaseServerClient();
+    
+    // Form data авах
+    const formData = await request.formData();
+    const title = formData.get('title') as string;
+    const description = formData.get('description') as string;
+    const content = formData.get('content') as string;
+    const file = formData.get('file') as File | null;
 
-    const { title, banner_image, created_date, category_id, items } = body;
-
-    if (!title || !created_date || !category_id) {
+    if (!title || !content) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Гарчиг болон агуулга оруулна уу" },
         { status: 400 }
       );
     }
 
-    const client = await pool.connect();
+    let imageUrl = null;
 
-    const insertContentQuery = `
-      INSERT INTO content (title, banner_image, created_date, category_id)
-      VALUES ($1, $2, $3, $4)
-      RETURNING id
-    `;
+    // Хэрэв зураг байвал upload хийх
+    if (file) {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('news-images')
+        .upload(fileName, file);
 
-    const contentRes = await client.query(insertContentQuery, [
-      title,
-      banner_image,
-      created_date,
-      category_id,
-    ]);
-
-    const contentId = contentRes.rows[0].id;
-
-    if (Array.isArray(items) && items.length > 0) {
-      const insertItemQuery = `
-        INSERT INTO content_item (content_id, text, image)
-        VALUES ($1, $2, $3)
-      `;
-
-      for (const item of items) {
-        await client.query(insertItemQuery, [
-          contentId,
-          item.text || null,
-          item.image || null,
-        ]);
+      if (uploadError) {
+        throw new Error('Зураг байршуулахад алдаа гарлаа: ' + uploadError.message);
       }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('news-images')
+        .getPublicUrl(fileName);
+
+      imageUrl = publicUrl;
     }
 
-    client.release();
+    // Get category_id
+    const category_id = formData.get('category_id');
 
-    return NextResponse.json({ message: "Content created", id: contentId });
+    // Мэдээг хадгалах
+    const { error: insertError } = await supabase
+      .from('content')
+      .insert({
+        title,
+        description,
+        content,
+        banner_image: imageUrl,
+        created_date: new Date().toISOString(),
+        type: 'news',
+        status: 'active',
+        category_id: category_id ? parseInt(category_id as string) : null
+      });
+
+    if (insertError) {
+      throw new Error('Мэдээ хадгалахад алдаа гарлаа: ' + insertError.message);
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Мэдээ амжилттай нэмэгдлээ' 
+    });
+
   } catch (error) {
-    console.error("POST error:", error);
+    console.error('Error:', error);
     return NextResponse.json(
-      { error: "Failed to create content" },
+      { 
+        success: false, 
+        error: (error as Error).message || 'Алдаа гарлаа' 
+      },
       { status: 500 }
     );
   }

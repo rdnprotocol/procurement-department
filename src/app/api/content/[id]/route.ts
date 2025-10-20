@@ -1,4 +1,4 @@
-import pool from "@/utils/db";
+import { createSupabaseServerClient } from "@/lib/supabaseClient";
 import { NextRequest, NextResponse } from "next/server";
 
 interface ContentItem {
@@ -19,56 +19,54 @@ export async function GET(
   }
 
   try {
-    const client = await pool.connect();
+    const supabase = createSupabaseServerClient();
 
-    const result = await client.query(
-      `
-      SELECT
-        c.id AS content_id,
-        c.title,
-        c.banner_image,
-        c.created_date,
-        c.category_id,
-        ci.id AS item_id,
-        ci.text,
-        ci.image
-      FROM content c
-      LEFT JOIN content_item ci ON c.id = ci.content_id
-      WHERE c.id = $1
-    `,
-      [contentId]
-    );
+    // Get content with its items using a single query
+    const { data, error } = await supabase
+      .from('content')
+      .select(`
+        id,
+        title,
+        banner_image,
+        created_date,
+        category_id,
+        content_item (
+          id,
+          text,
+          image
+        )
+      `)
+      .eq('id', contentId)
+      .single();
 
-    client.release();
+    if (error) {
+      console.error("Supabase query error:", error);
+      return NextResponse.json(
+        { error: "Failed to fetch content", details: error.message },
+        { status: 500 }
+      );
+    }
 
-    if (result.rows.length === 0) {
+    if (!data) {
       return NextResponse.json({ error: "Content not found" }, { status: 404 });
     }
 
+    // Transform the response to match the expected format
     const content = {
-      id: result.rows[0].content_id,
-      title: result.rows[0].title,
-      banner_image: result.rows[0].banner_image,
-      created_date: result.rows[0].created_date,
-      category_id: result.rows[0].category_id,
-      items: [] as ContentItem[],
+      id: data.id,
+      title: data.title,
+      banner_image: data.banner_image,
+      created_date: data.created_date,
+      category_id: data.category_id,
+      items: (data.content_item || []) as ContentItem[]
     };
-
-    for (const row of result.rows) {
-      if (row.item_id) {
-        content.items.push({
-          id: row.item_id,
-          text: row.text,
-          image: row.image,
-        });
-      }
-    }
 
     return NextResponse.json(content);
   } catch (error) {
     console.error("Error fetching content by ID:", error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Failed to fetch content", details: errorMessage },
       { status: 500 }
     );
   }

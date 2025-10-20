@@ -11,18 +11,30 @@ export default function LoginPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setMessage(""); // Clear previous error message
 
-    const res = await fetch("/api/login", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-      headers: { "Content-Type": "application/json" },
-    });
+    try {
+      console.log("Attempting login...");
+      const res = await fetch("/api/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: { "Content-Type": "application/json" },
+      });
 
-    const data = await res.json();
-    if (res.ok) {
-      router.push("/admin");
-    } else {
-      setMessage(data.error || "Login failed");
+      const data = await res.json();
+      console.log("Login response:", { status: res.status, data });
+
+      if (res.ok) {
+        console.log("Login successful, redirecting to /admin");
+        router.push("/admin");
+      } else {
+        const errorMessage = data.error || "Login failed";
+        console.error("Login failed:", errorMessage);
+        setMessage(errorMessage);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setMessage("Нэвтрэх үед алдаа гарлаа");
     }
   }
 

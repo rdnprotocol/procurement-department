@@ -90,7 +90,7 @@ export const Footer = () => {
             <Separator />
             <div className="flex gap-4 lg:flex-row flex-col justify-between uppercase mt-3">
               <p>
-                Нийслэлийн Худалдан Авах ажиллагааны газар. © 2024 Бүх эрх
+                Төв аймгийн худалдан авах ажиллагааны газар. © 2025 Бүх эрх
                 хуулиар хамгаалагдсан
               </p>
               <p className="text-end">
