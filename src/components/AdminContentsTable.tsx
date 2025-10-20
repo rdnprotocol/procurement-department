@@ -16,11 +16,6 @@ import Image from "next/image";
 import { CreateContent } from "@/components";
 import { Category } from "@/utils/category";
 
-interface ContentItem {
-  id: number;
-  text: string;
-  image: string;
-}
 interface ContentData {
   id: number;
   title: string;

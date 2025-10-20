@@ -29,7 +29,7 @@ export default async function AdminPage() {
     } else {
       throw new Error("Invalid token payload");
     }
-  } catch (err) {
+  } catch {
     throw new Error("Unauthorized");
   }
 
