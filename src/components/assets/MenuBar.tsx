@@ -156,7 +156,7 @@ const menuData = {
       ],
     },
     {
-      title: "Эс зүйн дэд хороо",
+      title: "Ёс зүйн дэд хороо",
       href: "/activities/monitoring/ethics",
       children: [
         {
