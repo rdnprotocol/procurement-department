@@ -74,7 +74,7 @@ export const AdminContentsTable = () => {
   };
   return (
     <Container>
-      <CreateContent />
+      <CreateContent selectedType="content" />
       <Table>
         <TableCaption>Нийтлэлүүд</TableCaption>
         <TableHeader>

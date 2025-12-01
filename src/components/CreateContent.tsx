@@ -37,7 +37,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 interface CreateContentProps {
-  selectedType: string;
+  selectedType?: string; // Reserved for future use
 }
 
 interface ContentItemValues {
@@ -54,7 +54,7 @@ interface CreateContentValues {
   items: ContentItemValues[];
 }
 
-export const CreateContent: React.FC<CreateContentProps> = ({ selectedType }) => {
+export const CreateContent: React.FC<CreateContentProps> = () => {
   const createContentSchema = Yup.object().shape({
     title: Yup.string().required("Гарчиг шаардлагатай"),
     banner_image: Yup.string().required("Баннер зураг шаардлагатай"),
@@ -124,7 +124,7 @@ export const CreateContent: React.FC<CreateContentProps> = ({ selectedType }) =>
 
   const removeItem = (index: number) => {
     const newItems = createContentForm.values.items.filter(
-      (_: any, i: number) => i !== index
+      (_: ContentItemValues, i: number) => i !== index
     );
     createContentForm.setFieldValue("items", newItems);
   };

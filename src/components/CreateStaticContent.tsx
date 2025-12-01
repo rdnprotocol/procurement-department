@@ -58,23 +58,6 @@ export function CreateStaticContent({ onSuccess }: CreateStaticContentProps) {
     }
   };
 
-  const getTypeLabel = (typeValue: string) => {
-    switch (typeValue) {
-      case 'mission':
-        return 'Эрхэм зорилго';
-      case 'vision':
-        return 'Алсын харалт';
-      case 'goal':
-        return 'Стратегийн зорилтууд';
-      case 'history':
-        return 'Түүхэн замнал';
-      case 'structure':
-        return 'Бүтэц, зохион байгуулалт';
-      default:
-        return typeValue;
-    }
-  };
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>

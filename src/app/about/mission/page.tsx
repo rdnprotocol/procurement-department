@@ -1,14 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabaseClient";
 import { Container } from "@/components/assets";
 
-interface MissionContent {
-  id: number;
-  title: string;
-  content: string;
-  type: 'mission' | 'vision' | 'goal';
-  created_at: string;
-}
-
 export const revalidate = 3600; // 1 цаг тутамд revalidate хийнэ
 
 export default async function MissionPage() {

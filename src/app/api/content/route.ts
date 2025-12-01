@@ -97,7 +97,11 @@ export async function POST(request: Request) {
     }
 
     // Content items хадгалах
-    const contentItems = items.map((item: any, index: number) => ({
+    interface ContentItem {
+      text: string;
+      image: string;
+    }
+    const contentItems = (items as ContentItem[]).map((item: ContentItem, index: number) => ({
       content_id: content.id,
       text: item.text,
       image: item.image,

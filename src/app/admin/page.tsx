@@ -6,7 +6,7 @@ import { ContentCard } from "@/components/ContentCard";
 import CreateNewsForm from '@/components/CreateNewsForm';
 import { AdminContentsTable } from "@/components";
 import { CreateStaticContent } from "@/components/CreateStaticContent";
-import { FileText, Newspaper, Settings } from 'lucide-react';
+import { FileText, Newspaper } from 'lucide-react';
 
 interface StaticContent {
   id: number;
@@ -52,30 +52,6 @@ export default function AdminPage() {
       </Container>
     );
   }
-
-  // Group contents by type for better organization
-  const groupedContents = {
-    mission: staticContents.find(c => c.type === 'mission'),
-    vision: staticContents.find(c => c.type === 'vision'),
-    goal: staticContents.find(c => c.type === 'goal'),
-    history: staticContents.find(c => c.type === 'history'),
-    structure: staticContents.find(c => c.type === 'structure'),
-  };
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'mission':
-      case 'vision':
-      case 'goal':
-        return <FileText className="w-5 h-5" />;
-      case 'history':
-        return <FileText className="w-5 h-5" />;
-      case 'structure':
-        return <Settings className="w-5 h-5" />;
-      default:
-        return <FileText className="w-5 h-5" />;
-    }
-  };
 
   return (
     <Container>

@@ -14,14 +14,7 @@ interface StaticContent {
   updated_at: string;
 }
 
-interface User {
-  email: string;
-  id?: string;
-  role?: string;
-}
-
 export function AdminContent() {
-  const [user, setUser] = useState<User | null>(null);
   const [staticContents, setStaticContents] = useState<StaticContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 

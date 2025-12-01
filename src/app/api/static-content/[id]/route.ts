@@ -4,14 +4,15 @@ import { NextResponse } from "next/server";
 // GET request - контент авах
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = createSupabaseServerClient();
     const { data: content, error } = await supabase
       .from('static_contents')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (error) throw error;
@@ -29,9 +30,10 @@ export async function GET(
 // PUT request - контент шинэчлэх
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const supabase = createSupabaseServerClient();
     const { title, content } = await request.json();
 
@@ -42,7 +44,7 @@ export async function PUT(
     const { error } = await supabase
       .from('static_contents')
       .update(updateData)
-      .eq('id', params.id);
+      .eq('id', id);
 
     if (error) throw error;
 
