@@ -36,37 +36,42 @@ import {
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
-interface contentItemValues {
+interface CreateContentProps {
+  selectedType: string;
+}
+
+interface ContentItemValues {
   text: string;
   image: string;
   file_type: "image" | "pdf" | null;
 }
 
-interface createContentValues {
+interface CreateContentValues {
   title: string;
   banner_image: string;
   created_date: Date;
   category_id: number;
-  items: contentItemValues[];
+  items: ContentItemValues[];
 }
 
-export const CreateContent = () => {
+export const CreateContent: React.FC<CreateContentProps> = ({ selectedType }) => {
   const createContentSchema = Yup.object().shape({
     title: Yup.string().required("Гарчиг шаардлагатай"),
     banner_image: Yup.string().required("Баннер зураг шаардлагатай"),
     created_date: Yup.date().required("Үүсгэсэн огноо шаардлагатай"),
-    category_id: Yup.number().required("Ангилал ID шаардлагатай"),
+    category_id: Yup.number().required("Ангилал сонгох шаардлагатай"),
     items: Yup.array()
       .of(
         Yup.object().shape({
           text: Yup.string(),
-          file: Yup.string(),
+          image: Yup.string(),
+          file_type: Yup.string().nullable()
         })
       )
       .min(1, "Дор хаяж нэг элемент шаардлагатай"),
   });
 
-  const createContentForm = useFormik<createContentValues>({
+  const createContentForm = useFormik<CreateContentValues>({
     initialValues: {
       title: "",
       banner_image: "",
@@ -77,23 +82,34 @@ export const CreateContent = () => {
     validationSchema: createContentSchema,
     onSubmit: async (values) => {
       try {
+        // Контент үүсгэх
         const response = await fetch("/api/content", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(values),
+          body: JSON.stringify({
+            title: values.title,
+            banner_image: values.banner_image,
+            created_date: values.created_date.toISOString(),
+            category_id: values.category_id,
+            items: values.items.map((item: ContentItemValues, index: number) => ({
+              text: item.text,
+              image: item.image,
+              order_index: index
+            }))
+          }),
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          console.error("Failed to submit content:", errorData);
-          return;
+          throw new Error(errorData.error || 'Контент үүсгэхэд алдаа гарлаа');
         }
 
         const result = await response.json();
-        console.log("Content submitted successfully:", result);
+        alert(result.message);
         createContentForm.resetForm();
       } catch (error) {
         console.error("Error submitting form:", error);
+        alert(error instanceof Error ? error.message : 'Алдаа гарлаа');
       }
     },
   });
@@ -108,7 +124,7 @@ export const CreateContent = () => {
 
   const removeItem = (index: number) => {
     const newItems = createContentForm.values.items.filter(
-      (_, i) => i !== index
+      (_: any, i: number) => i !== index
     );
     createContentForm.setFieldValue("items", newItems);
   };
@@ -367,7 +383,7 @@ export const CreateContent = () => {
             )}
 
             <div className="space-y-4">
-              {createContentForm.values.items.map((item, index) => (
+              {createContentForm.values.items.map((item: ContentItemValues, index: number) => (
                 <Card key={index} className="relative">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">

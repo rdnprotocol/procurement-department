@@ -16,6 +16,13 @@ import Image from "next/image";
 import { CreateContent } from "@/components";
 import { Category } from "@/utils/category";
 
+interface ContentItemData {
+  id: number;
+  text: string;
+  image: string;
+  order_index: number;
+}
+
 interface ContentData {
   id: number;
   title: string;
@@ -26,6 +33,7 @@ interface ContentData {
   status: string;
   created_date: string;
   category_id: number | null;
+  content_item?: ContentItemData[];
 }
 export const AdminContentsTable = () => {
   const [contents, setContents] = useState<ContentData[]>([]);
@@ -75,6 +83,7 @@ export const AdminContentsTable = () => {
             <TableHead></TableHead>
             <TableHead className="max-w-96">Гарчиг</TableHead>
             <TableHead>Төрөл</TableHead>
+            <TableHead>Элементүүд</TableHead>
             <TableHead className="text-right">Нийтлэгдсэн огноо</TableHead>
           </TableRow>
         </TableHeader>
@@ -109,6 +118,7 @@ export const AdminContentsTable = () => {
                 {content.title}
               </TableCell>
               <TableCell>{getCategoryNameById(content.category_id)}</TableCell>
+              <TableCell>{content.content_item?.length || 0} элемент</TableCell>
               <TableCell className="text-right">
                 {new Date(content.created_date).toISOString().slice(0, 10)}
               </TableCell>

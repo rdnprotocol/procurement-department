@@ -32,11 +32,18 @@ export async function GET() {
     console.log('Debug: Creating Supabase client...');
     const supabase = createSupabaseServerClient();
 
-    // Get all news content
+    // Get all content
     const { data: content, error: contentError } = await supabase
       .from('content')
-      .select('*')
-      .eq('type', 'news')
+      .select(`
+        *,
+        content_item (
+          id,
+          text,
+          image,
+          order_index
+        )
+      `)
       .order('created_date', { ascending: false });
 
     if (contentError) {
@@ -58,66 +65,56 @@ export async function POST(request: Request) {
   try {
     const supabase = createSupabaseServerClient();
     
-    // Form data авах
-    const formData = await request.formData();
-    const title = formData.get('title') as string;
-    const description = formData.get('description') as string;
-    const content = formData.get('content') as string;
-    const file = formData.get('file') as File | null;
+    // JSON data авах
+    const data = await request.json();
+    const { title, banner_image, created_date, category_id, items } = data;
 
-    if (!title || !content) {
+    if (!title || !banner_image || !created_date || !category_id || !items || items.length === 0) {
       return NextResponse.json(
-        { error: "Гарчиг болон агуулга оруулна уу" },
+        { error: "Бүх талбаруудыг бөглөнө үү" },
         { status: 400 }
       );
     }
 
-    let imageUrl = null;
-
-    // Хэрэв зураг байвал upload хийх
-    if (file) {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-      
-      const { error: uploadError } = await supabase.storage
-        .from('news-images')
-        .upload(fileName, file);
-
-      if (uploadError) {
-        throw new Error('Зураг байршуулахад алдаа гарлаа: ' + uploadError.message);
-      }
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('news-images')
-        .getPublicUrl(fileName);
-
-      imageUrl = publicUrl;
-    }
-
-    // Get category_id
-    const category_id = formData.get('category_id');
-
     // Мэдээг хадгалах
-    const { error: insertError } = await supabase
+    const { data: content, error: insertError } = await supabase
       .from('content')
       .insert({
         title,
-        description,
-        content,
-        banner_image: imageUrl,
-        created_date: new Date().toISOString(),
-        type: 'news',
-        status: 'active',
-        category_id: category_id ? parseInt(category_id as string) : null
-      });
+        description: data.description || null,
+        content: data.content || null,
+        banner_image,
+        created_date,
+        category_id,
+        type: 'content',
+        status: data.status || 'active'
+      })
+      .select()
+      .single();
 
     if (insertError) {
-      throw new Error('Мэдээ хадгалахад алдаа гарлаа: ' + insertError.message);
+      throw new Error('Контент хадгалахад алдаа гарлаа: ' + insertError.message);
+    }
+
+    // Content items хадгалах
+    const contentItems = items.map((item: any, index: number) => ({
+      content_id: content.id,
+      text: item.text,
+      image: item.image,
+      order_index: index
+    }));
+
+    const { error: itemsError } = await supabase
+      .from('content_item')
+      .insert(contentItems);
+
+    if (itemsError) {
+      throw new Error('Контентийн элементүүдийг хадгалахад алдаа гарлаа: ' + itemsError.message);
     }
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Мэдээ амжилттай нэмэгдлээ' 
+      message: 'Контент амжилттай нэмэгдлээ' 
     });
 
   } catch (error) {
