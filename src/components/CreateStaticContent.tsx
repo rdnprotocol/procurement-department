@@ -84,6 +84,7 @@ export function CreateStaticContent({ onSuccess }: CreateStaticContentProps) {
                 <SelectItem value="goal">Стратегийн зорилтууд</SelectItem>
                 <SelectItem value="history">Түүхэн замнал</SelectItem>
                 <SelectItem value="structure">Бүтэц, зохион байгуулалт</SelectItem>
+                <SelectItem value="intro">Байгууллагын танилцуулга</SelectItem>
               </SelectContent>
             </Select>
           </div>

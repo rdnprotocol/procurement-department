@@ -34,7 +34,9 @@ export async function middleware(request: NextRequest) {
       }
       
       console.log('Middleware: Access granted');
-      return NextResponse.next();
+      const response = NextResponse.next();
+      response.headers.set('x-pathname', request.nextUrl.pathname);
+      return response;
     } catch (error) {
       // Token хүчингүй бол login хуудас руу чиглүүлэх
       console.error('Middleware: Token verification failed:', error);
@@ -42,7 +44,9 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set('x-pathname', request.nextUrl.pathname);
+  return response;
 }
 
 // Middleware ажиллах route-уудыг тодорхойлох

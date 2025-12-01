@@ -66,6 +66,8 @@ export function EditStaticContent({ content }: EditStaticContentProps) {
         return 'Түүхэн замнал';
       case 'structure':
         return 'Бүтэц, зохион байгуулалт';
+      case 'intro':
+        return 'Байгууллагын танилцуулга';
       default:
         return type;
     }

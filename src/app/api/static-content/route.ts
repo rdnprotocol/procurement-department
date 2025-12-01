@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     }
 
     // Validate type
-    const validTypes = ['mission', 'vision', 'goal', 'history', 'structure'];
+    const validTypes = ['mission', 'vision', 'goal', 'history', 'structure', 'intro'];
     if (!validTypes.includes(type)) {
       return NextResponse.json(
         { error: 'Хүчингүй төрөл' },
