@@ -12,7 +12,7 @@ export const Category = [
   {
     id: 3,
     href: "huuli-togtoomj",
-    mongolian_name: "Хууль тогтоомж",
+    mongolian_name: "Худалдан авах ажиллагааны хууль тогтоомж",
   },
   {
     id: 4,
@@ -22,7 +22,7 @@ export const Category = [
   {
     id: 5,
     href: "dargiin-tushaal",
-    mongolian_name: "Даргын тушаал",
+    mongolian_name: "Газрын даргын тушаал",
   },
   {
     id: 6,
@@ -37,9 +37,33 @@ export const Category = [
   {
     id: 8,
     href: "at-tolovlogoo-tailan",
-    mongolian_name: "Төлөвлөгөө, тайлан",
+    mongolian_name: "Авилгын эсрэг төлөвлөгөө, тайлан",
   },
-  { id: 9, href: "hasum-report", mongolian_name: "ХАСУМ" },
+  { 
+    id: 9, 
+    href: "hasum-report", 
+    mongolian_name: "ХАСУМ хянасан дүгнэлт" 
+  },
+  {
+    id: 10,
+    href: "strateg-tolovlogoo-tailan",
+    mongolian_name: "Бодлогын баримт бичиг, хууль тогтоомж",
+  },
+  {
+    id: 11,
+    href: "statistic",
+    mongolian_name: "Худалдан авалтын статистик мэдээ",
+  },
+  {
+    id: 12,
+    href: "a3-gerchilgee",
+    mongolian_name: "А3 гэрчилгээтэй хүний нөөц",
+  },
+  {
+    id: 13,
+    href: "zovlomj",
+    mongolian_name: "Захиалагчдад зөвлөмж",
+  },
 ];
 
 export const GetCategoryById = (id: number) => {

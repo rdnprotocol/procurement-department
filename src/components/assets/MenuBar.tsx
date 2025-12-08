@@ -32,38 +32,15 @@ const menuData = {
       href: "/about/history",
     },
   ],
-  // Green
+  // Green - Simple menu without children
   law: [
     {
       title: "Худалдан авах ажиллагааны талаар хууль тогтоомж",
-      href: "https://www.tender.gov.mn/mn/document/list",
-      children: [
-        {
-          title: "Хууль тогтоомж",
-          href: "/category/huuli-togtoomj",
-        },
-        {
-          title: "Жишиг баримт бичиг",
-          href: "https://www.tender.gov.mn/mn/document/list",
-        },
-      ],
+      href: "/law/procurement",
     },
     {
       title: "Байгууллагын үйл ажиллагаанд хамаарах хууль тогтоомж",
-      href: "/category/baiguullagiin-huuli-togtoomj",
-      children: [
-        {
-          title: "Хууль тогтоомж",
-          description:
-            "Байгууллагын үйл ажиллагаанд хамаарах хууль тогтоомжууд",
-          href: "/category/baiguullagiin-huuli-togtoomj",
-        },
-        {
-          title: "Газрын даргын тушаал",
-          description: "Газрын даргын гаргасан тушаал, шийдвэрүүд",
-          href: "/category/dargiin-tushaal",
-        },
-      ],
+      href: "/law/organization",
     },
   ],
   // Green
@@ -129,11 +106,11 @@ const menuData = {
     },
     {
       title: "Санхүүгийн ил тод байдал",
-      href: "/https://shilendans.gov.mn/organization",
+      href: "https://shilendans.gov.mn/organization/20081?ry=2025",
       children: [
         {
           title: "Шилэн данс",
-          href: "/https://shilendans.gov.mn/organization/20081?ry=2025",
+          href: "https://shilendans.gov.mn/organization/20081?ry=2025",
         },
       ],
     },
@@ -194,8 +171,7 @@ const menuData = {
     },
     {
       title: "А3 гэрчилгээтэй хүний нөөц",
-      href: "/",
-      //news/id
+      href: "/category/a3-gerchilgee",
     },
     {
       title: "Цахим дэлгүүр",
@@ -203,7 +179,7 @@ const menuData = {
     },
     {
       title: "Захиалагчдад зөвлөмж",
-      href: "/",
+      href: "/category/zovlomj",
     },
   ],
   // Green
@@ -522,6 +498,11 @@ interface MenuCategory {
   children: MenuItem[];
 }
 
+// Helper function to check if URL is external
+const isExternalLink = (href: string) => {
+  return href.startsWith('http://') || href.startsWith('https://');
+};
+
 // Desktop Menu Components
 const SimpleMenuSection = ({
   title,
@@ -538,7 +519,13 @@ const SimpleMenuSection = ({
       <MenubarContent className="p-0 font-normal uppercase text-xs">
         {items.map((item, index) => (
           <MenubarItem key={index}>
-            <Link href={item.href}>{item.title}</Link>
+            {isExternalLink(item.href) ? (
+              <a href={item.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+                {item.title}
+              </a>
+            ) : (
+              <Link href={item.href}>{item.title}</Link>
+            )}
           </MenubarItem>
         ))}
       </MenubarContent>
@@ -567,7 +554,13 @@ const NestedMenuSection = ({
             <MenubarSubContent className="p-0">
               {category.children.map((item, itemIndex) => (
                 <MenubarItem key={itemIndex}>
-                  <Link href={item.href}>{item.title}</Link>
+                  {isExternalLink(item.href) ? (
+                    <a href={item.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+                      {item.title}
+                    </a>
+                  ) : (
+                    <Link href={item.href}>{item.title}</Link>
+                  )}
                 </MenubarItem>
               ))}
             </MenubarSubContent>
@@ -585,15 +578,30 @@ const MobileMenuItem = ({
 }: {
   item: MenuItem;
   onClose: () => void;
-}) => (
-  <Link
-    href={item.href}
-    className="block px-4 py-3 text-xs hover:bg-gray-100 border-b border-gray-200"
-    onClick={onClose}
-  >
-    {item.title}
-  </Link>
-);
+}) => {
+  if (isExternalLink(item.href)) {
+    return (
+      <a
+        href={item.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block px-4 py-3 text-xs hover:bg-gray-100 border-b border-gray-200"
+        onClick={onClose}
+      >
+        {item.title}
+      </a>
+    );
+  }
+  return (
+    <Link
+      href={item.href}
+      className="block px-4 py-3 text-xs hover:bg-gray-100 border-b border-gray-200"
+      onClick={onClose}
+    >
+      {item.title}
+    </Link>
+  );
+};
 
 const MobileMenuSection = ({
   title,
@@ -671,14 +679,27 @@ const MobileNestedMenuSection = ({
               {openSubmenus.includes(categoryIndex) && (
                 <div className="bg-white">
                   {category.children.map((item, itemIndex) => (
-                    <Link
-                      key={itemIndex}
-                      href={item.href}
-                      className="block px-8 py-2 text-xs hover:bg-gray-100 border-b border-gray-100"
-                      onClick={onClose}
-                    >
-                      {item.title}
-                    </Link>
+                    isExternalLink(item.href) ? (
+                      <a
+                        key={itemIndex}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block px-8 py-2 text-xs hover:bg-gray-100 border-b border-gray-100"
+                        onClick={onClose}
+                      >
+                        {item.title}
+                      </a>
+                    ) : (
+                      <Link
+                        key={itemIndex}
+                        href={item.href}
+                        className="block px-8 py-2 text-xs hover:bg-gray-100 border-b border-gray-100"
+                        onClick={onClose}
+                      >
+                        {item.title}
+                      </Link>
+                    )
                   ))}
                 </div>
               )}
@@ -707,7 +728,7 @@ export const MenuBar = () => {
 
         <SimpleMenuSection title="Бидний тухай" items={menuData.about} />
 
-        <NestedMenuSection title="Хууль, Эрх зүй" categories={menuData.law} />
+        <SimpleMenuSection title="Хууль, Эрх зүй" items={menuData.law} />
 
         <SimpleMenuSection title="Мэдээ, мэдээлэл" items={menuData.news} />
 
@@ -727,7 +748,7 @@ export const MenuBar = () => {
 
         <MenubarMenu>
           <div className="hover:bg-accent hover:text-accent-foreground flex items-center rounded-sm px-2 py-1 text-xs font-normal outline-hidden select-none">
-            <Link href="#contact">Холбоо барих</Link>
+            <Link href="/contact">Холбоо барих</Link>
           </div>
         </MenubarMenu>
       </Menubar>
@@ -771,9 +792,9 @@ export const MenuBar = () => {
                 onClose={closeMobileMenu}
               />
 
-              <MobileNestedMenuSection
+              <MobileMenuSection
                 title="Хууль, Эрх зүй"
-                categories={menuData.law}
+                items={menuData.law}
                 onClose={closeMobileMenu}
               />
 
@@ -808,7 +829,7 @@ export const MenuBar = () => {
               />
 
               <Link
-                href="#contact"
+                href="/contact"
                 className="block px-4 py-3 text-xs font-normal hover:bg-gray-100 border-b border-gray-200"
                 onClick={closeMobileMenu}
               >
