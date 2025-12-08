@@ -137,7 +137,9 @@ export default function AdminPage() {
       color: 'from-blue-500 to-blue-600',
       bgColor: 'from-blue-50 to-blue-100/50',
       items: [
-        { type: 'mission', href: '/about/mission', label: 'Эрхэм зорилго, үйл ажиллагааны стратегийн зорилго, зорилт' },
+        { type: 'mission', href: '/about/mission', label: 'Эрхэм зорилго' },
+        { type: 'vision', href: '/about/mission', label: 'Алсын харалт' },
+        { type: 'goal', href: '/about/mission', label: 'Стратегийн зорилтууд' },
         { type: 'structure', href: '/about/structure', label: 'Бүтэц, зохион байгуулалт' },
         { type: 'intro', href: '/about/intro', label: 'Байгууллагын танилцуулга' },
         { type: 'history', href: '/about/history', label: 'Түүхэн замнал' },
