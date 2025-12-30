@@ -1,8 +1,6 @@
 'use client';
 
-import { CreateStaticContent } from "@/components/CreateStaticContent";
-import { Card, CardContent } from "@/components/ui/card";
-import { Edit, AlertCircle } from 'lucide-react';
+import { Edit } from 'lucide-react';
 import { MenuGroup, MenuItem, StaticContent, ContentData } from '../types';
 import { MenuTabs } from './MenuTabs';
 import { LawDocumentsSection } from './LawDocumentsSection';

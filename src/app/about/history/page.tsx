@@ -1,4 +1,6 @@
-import { createSupabaseServerClient } from "@/lib/supabaseClient";
+"use client";
+
+import { useEffect, useState } from "react";
 import { Container } from "@/components/assets";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -8,212 +10,228 @@ import {
   TrendingUp, 
   Building2,
   Clock,
-  MapPin
+  MapPin,
+  Globe,
+  Loader2,
+  Star,
+  Target,
+  Users,
+  Zap,
+  Shield,
+  Heart
 } from "lucide-react";
 
-export const revalidate = 3600; // 1 цаг тутамд revalidate хийнэ
+// Icon mapping
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  History, Calendar, Award, TrendingUp, Building2, Clock, MapPin, Globe,
+  Star, Target, Users, Zap, Shield, Heart
+};
 
-export default async function HistoryPage() {
-  const supabase = createSupabaseServerClient();
+interface HistoryEvent {
+  id: string;
+  year: string;
+  title: string;
+  description: string;
+  icon: string;
+  color: string;
+  sort_order: number;
+}
 
-  // History контентийг database-аас авах
-  const { data: historyContent } = await supabase
-    .from('static_contents')
-    .select('*')
-    .eq('type', 'history')
-    .single();
+interface StaticContent {
+  id: number;
+  title: string;
+  content: string;
+  type: string;
+}
 
-  // Түүхэн онцлох үйл явдлууд (жишээ мэдээлэл)
-  const historicalEvents = [
-    {
-      year: "2020",
-      title: "Байгууллагын үүсэл",
-      description: "Нийслэлийн Худалдан авах ажиллагааны газар байгуулагдсан",
-      icon: Building2,
-      color: "from-blue-500 to-blue-600",
-    },
-    {
-      year: "2021",
-      title: "Цахим системийн нэвтрүүлэлт",
-      description: "Худалдан авах ажиллагааны цахим системийг нэвтрүүлж, ил тод байдлыг сайжруулсан",
-      icon: TrendingUp,
-      color: "from-green-500 to-green-600",
-    },
-    {
-      year: "2022",
-      title: "Хууль тогтоомжийн шинэчлэл",
-      description: "Худалдан авах ажиллагааны хууль тогтоомжийг шинэчлэн, сайжруулсан",
-      icon: Award,
-      color: "from-purple-500 to-purple-600",
-    },
-    {
-      year: "2023",
-      title: "Олон улсын хамтын ажиллагаа",
-      description: "Олон улсын байгууллагуудтай хамтран ажиллаж, туршлага солилцсон",
-      icon: MapPin,
-      color: "from-orange-500 to-orange-600",
-    },
-  ];
+export default function HistoryPage() {
+  const [events, setEvents] = useState<HistoryEvent[]>([]);
+  const [historyContent, setHistoryContent] = useState<StaticContent | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const [eventsRes, staticRes] = await Promise.all([
+        fetch('/api/history-events'),
+        fetch('/api/static-content')
+      ]);
+
+      if (eventsRes.ok) {
+        setEvents(await eventsRes.json());
+      }
+
+      if (staticRes.ok) {
+        const staticData = await staticRes.json();
+        const history = staticData.find((s: StaticContent) => s.type === 'history');
+        if (history) setHistoryContent(history);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Container>
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Уншиж байна...</p>
+          </div>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <Container>
       <div className="max-w-7xl mx-auto py-12 px-4">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#24276B] to-[#3d42a0] rounded-2xl mb-6 shadow-lg">
-            <History className="w-10 h-10 text-white" />
+        {/* Hero Section */}
+        <div className="relative mb-16 overflow-hidden rounded-3xl bg-gradient-to-br from-[#24276B] via-[#3d42a0] to-[#5a5fd4] p-8 md:p-12">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Түүхэн замнал
-          </h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Байгууллагын үүсэл, хөгжил, онцлох үйл явдлууд болон түүхэн мэдээлэл
-          </p>
+          
+          <div className="relative z-10 text-center text-white">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl mb-6">
+              <History className="w-10 h-10" />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Түүхэн замнал
+            </h1>
+            <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto">
+              Байгууллагын үүсэл, хөгжил, онцлох үйл явдлууд болон түүхэн мэдээлэл
+            </p>
+          </div>
         </div>
 
         {/* Main Content from Database */}
-        {historyContent && (
-          <Card className="mb-12 shadow-lg border-0">
-            <CardHeader className="bg-gradient-to-r from-[#24276B] to-[#3d42a0] text-white rounded-t-xl">
+        {/* {historyContent && (
+          <Card className="mb-12 shadow-xl border-0 overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-[#24276B] to-[#3d42a0] text-white">
               <CardTitle className="text-2xl flex items-center gap-3">
                 <Clock className="w-6 h-6" />
                 {historyContent.title || "Түүхэн замнал"}
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent className="pt-8 pb-8">
               <div 
-                className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:text-gray-900 prose-ul:text-gray-700 prose-li:text-gray-700 prose-img:rounded-lg prose-img:shadow-md"
-                dangerouslySetInnerHTML={{ __html: historyContent.content || "Түүхэн замнал оруулаагүй байна" }}
+                className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:text-gray-900 prose-ul:text-gray-700 prose-li:text-gray-700 prose-img:rounded-xl prose-img:shadow-lg"
+                dangerouslySetInnerHTML={{ __html: historyContent.content }}
               />
             </CardContent>
           </Card>
-        )}
+        )} */}
 
         {/* Timeline Section */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Онцлох үйл явдлууд
-          </h2>
+        {events.length > 0 && (
+          <div className="mb-16">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                Онцлох үйл явдлууд
+              </h2>
+              <div className="w-20 h-1 bg-gradient-to-r from-[#24276B] to-[#3d42a0] mx-auto rounded-full" />
+            </div>
 
-          <div className="relative">
-            {/* Timeline Line */}
-            <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-[#24276B] to-[#3d42a0] transform md:-translate-x-1/2" />
+            <div className="relative">
+              {/* Timeline Line */}
+              <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-[#24276B] via-[#3d42a0] to-[#5a5fd4] transform md:-translate-x-1/2 rounded-full" />
 
-            {/* Timeline Items */}
-            <div className="space-y-12">
-              {historicalEvents.map((event, index) => {
-                const Icon = event.icon;
-                const isEven = index % 2 === 0;
-                
-                return (
-                  <div
-                    key={index}
-                    className={`relative flex items-center ${
-                      isEven ? 'md:flex-row' : 'md:flex-row-reverse'
-                    } flex-col gap-6`}
-                  >
-                    {/* Timeline Dot */}
-                    <div className={`absolute left-8 md:left-1/2 w-6 h-6 rounded-full bg-gradient-to-r ${event.color} border-4 border-white shadow-lg transform md:-translate-x-1/2 z-10 flex items-center justify-center`}>
-                      <Icon className="w-3 h-3 text-white" />
-                    </div>
+              {/* Timeline Items */}
+              <div className="space-y-12">
+                {events.map((event, index) => {
+                  const IconComponent = iconMap[event.icon] || Calendar;
+                  const isEven = index % 2 === 0;
+                  
+                  return (
+                    <div
+                      key={event.id}
+                      className={`relative flex items-center ${
+                        isEven ? 'md:flex-row' : 'md:flex-row-reverse'
+                      } flex-col gap-6`}
+                    >
+                      {/* Timeline Dot */}
+                      <div className={`absolute left-8 md:left-1/2 w-8 h-8 rounded-full bg-gradient-to-r ${event.color} border-4 border-white shadow-lg transform md:-translate-x-1/2 z-10 flex items-center justify-center`}>
+                        <IconComponent className="w-4 h-4 text-white" />
+                      </div>
 
-                    {/* Content Card */}
-                    <div className={`w-full md:w-5/12 ${isEven ? 'md:mr-auto md:pr-8' : 'md:ml-auto md:pl-8'} ml-16 md:ml-0`}>
-                      <Card className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-                        <CardHeader className={`bg-gradient-to-r ${event.color} text-white`}>
-                          <div className="flex items-center justify-between">
-                            <CardTitle className="text-xl flex items-center gap-2">
-                              <Calendar className="w-5 h-5" />
+                      {/* Year Badge (Desktop) */}
+                      <div className={`hidden md:block absolute left-1/2 ${isEven ? 'translate-x-8' : '-translate-x-20'} transform`}>
+                        <span className={`px-4 py-1.5 bg-gradient-to-r ${event.color} text-white text-sm font-bold rounded-full shadow-lg`}>
+                          {event.year}
+                        </span>
+                      </div>
+
+                      {/* Content Card */}
+                      <div className={`w-full md:w-5/12 ${isEven ? 'md:mr-auto md:pr-12' : 'md:ml-auto md:pl-12'} ml-16 md:ml-0`}>
+                        <Card className="shadow-xl border-0 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 group overflow-hidden">
+                          <div className={`h-2 bg-gradient-to-r ${event.color}`} />
+                          <CardContent className="pt-6 pb-6">
+                            {/* Year Badge (Mobile) */}
+                            <span className={`md:hidden inline-block px-3 py-1 bg-gradient-to-r ${event.color} text-white text-xs font-bold rounded-full mb-3`}>
                               {event.year}
-                            </CardTitle>
-                            <div className="p-2 bg-white/20 rounded-lg group-hover:scale-110 transition-transform">
-                              <Icon className="w-5 h-5" />
+                            </span>
+                            
+                            <div className="flex items-start gap-4">
+                              <div className={`p-3 rounded-xl bg-gradient-to-br ${event.color} group-hover:scale-110 transition-transform duration-300`}>
+                                <IconComponent className="w-6 h-6 text-white" />
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                  {event.title}
+                                </h3>
+                                <p className="text-gray-600 leading-relaxed">
+                                  {event.description}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="pt-6">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                            {event.title}
-                          </h3>
-                          <p className="text-gray-700 leading-relaxed">
-                            {event.description}
-                          </p>
-                        </CardContent>
-                      </Card>
+                          </CardContent>
+                        </Card>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
+        )}
+
+        {/* Stats Section */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+          {[
+            { label: 'Жилийн туршлага', value: `${new Date().getFullYear() - 2020}+`, icon: Calendar, color: 'from-blue-500 to-blue-600' },
+            { label: 'Тендерийн урилга', value: '100+', icon: Award, color: 'from-green-500 to-green-600' },
+            { label: 'Сумдын тоо', value: '27', icon: MapPin, color: 'from-purple-500 to-purple-600' },
+            { label: 'Ажилтнууд', value: '50+', icon: Users, color: 'from-orange-500 to-orange-600' },
+          ].map((stat, index) => {
+            const StatIcon = stat.icon;
+            return (
+              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden group">
+                <div className={`h-1.5 bg-gradient-to-r ${stat.color}`} />
+                <CardContent className="pt-6 pb-6 text-center">
+                  <div className={`w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                    <StatIcon className="w-7 h-7 text-white" />
+                  </div>
+                  <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
+                  <div className="text-sm text-gray-500">{stat.label}</div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
-        {/* Additional Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <Card className="shadow-lg border-0">
-            <CardHeader className="bg-gradient-to-r from-[#24276B] to-[#3d42a0] text-white">
-              <CardTitle className="text-xl flex items-center gap-3">
-                <Award className="w-6 h-6" />
-                Бидний амжилтууд
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3">
-                  <span className="w-2 h-2 rounded-full bg-[#24276B] mt-2 flex-shrink-0" />
-                  <span className="text-gray-700">Худалдан авах ажиллагааны ил тод байдлыг сайжруулсан</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-2 h-2 rounded-full bg-[#24276B] mt-2 flex-shrink-0" />
-                  <span className="text-gray-700">Цахим системийг нэвтрүүлж, үйлчилгээний чанарыг дээшлүүлсэн</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-2 h-2 rounded-full bg-[#24276B] mt-2 flex-shrink-0" />
-                  <span className="text-gray-700">Хууль тогтоомжийн дагуу зөв хэрэгжүүлэлтийг хангасан</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-2 h-2 rounded-full bg-[#24276B] mt-2 flex-shrink-0" />
-                  <span className="text-gray-700">Иргэд, байгууллагуудын итгэлцлийг олж авсан</span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-lg border-0">
-            <CardHeader className="bg-gradient-to-r from-[#24276B] to-[#3d42a0] text-white">
-              <CardTitle className="text-xl flex items-center gap-3">
-                <TrendingUp className="w-6 h-6" />
-                Хөгжлийн чиглэл
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3">
-                  <span className="w-2 h-2 rounded-full bg-[#24276B] mt-2 flex-shrink-0" />
-                  <span className="text-gray-700">Цахим системийн үргэлжлүүлэн сайжруулах</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-2 h-2 rounded-full bg-[#24276B] mt-2 flex-shrink-0" />
-                  <span className="text-gray-700">Мэргэжлийн чадварыг дээшлүүлэх</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-2 h-2 rounded-full bg-[#24276B] mt-2 flex-shrink-0" />
-                  <span className="text-gray-700">Олон улсын хамтын ажиллагааг өргөжүүлэх</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-2 h-2 rounded-full bg-[#24276B] mt-2 flex-shrink-0" />
-                  <span className="text-gray-700">Ил тод байдлыг цаашид сайжруулах</span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Call to Action */}
-        {!historyContent && (
-          <Card className="mt-12 bg-gradient-to-br from-[#24276B]/5 to-[#3d42a0]/5 border border-[#24276B]/20">
-            <CardContent className="pt-6 text-center">
-              <History className="w-12 h-12 mx-auto mb-4 text-[#24276B]" />
+        {/* Empty State */}
+        {!historyContent && events.length === 0 && (
+          <Card className="bg-gradient-to-br from-[#24276B]/5 to-[#3d42a0]/5 border border-[#24276B]/20">
+            <CardContent className="py-12 text-center">
+              <History className="w-16 h-16 mx-auto mb-4 text-[#24276B]/50" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 Түүхэн замнал оруулаагүй байна
               </h3>

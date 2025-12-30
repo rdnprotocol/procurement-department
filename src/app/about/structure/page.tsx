@@ -1,6 +1,7 @@
-import { createSupabaseServerClient } from "@/lib/supabaseClient";
+"use client";
+
+import { useEffect, useState } from "react";
 import { Container } from "@/components/assets";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Building2, 
   Users, 
@@ -8,44 +9,77 @@ import {
   Phone, 
   Mail, 
   MapPin,
-  Network,
   UserCircle,
-  FileText
+  X,
+  ChevronRight,
+  Loader2
 } from "lucide-react";
 
-export const revalidate = 3600; // 1 цаг тутамд revalidate хийнэ
+interface Department {
+  id: string;
+  name: string;
+  short_name: string;
+  description: string;
+  responsibilities: string[];
+  contact_person: string;
+  contact_position: string;
+  contact_room: string;
+  contact_phone: string;
+  contact_email: string;
+  color: string;
+  sort_order: number;
+  is_director: boolean;
+}
 
-export default async function StructurePage() {
-  const supabase = createSupabaseServerClient();
+export default function StructurePage() {
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedDept, setSelectedDept] = useState<Department | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Structure контентийг database-аас авах
-  const { data: structureContent } = await supabase
-    .from('static_contents')
-    .select('*')
-    .eq('type', 'structure')
-    .single();
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
 
-  // Байгууллагын бүтцийн мэдээлэл
-  const organizationStructure = {
-    mainOffice: {
-      name: "Нийслэлийн Худалдан авах ажиллагааны газар",
-      departments: [
-        {
-          name: "Захиргаа, санхүүгийн хэлтэс",
-          responsibilities: [
-            "Худалдан авах ажиллагааг ил тод, өрсөлдөх тэгш боломжтой, үр ашигтай, хэмнэлттэй, хариуцлагатай байх зарчимд нийцүүлэн хууль тогтоомжийн дагуу зохион байгуулах",
-            "Төсвийн ерөнхийлөн захирагчийн худалдан авах ажиллагааны төлөвлөгөөг боловсруулж, батлуулах, хэрэгжүүлэх",
-            "Төсвийн ерөнхийлөн захирагчийн худалдан авах ажиллагааны ерөнхий төлөвлөгөөг цахим системээр батлуулах, төлөвлөгөөнд өөрчлөлт оруулах, эрх шилжүүлэх, төлөвлөгөө батлах ажлыг холбогдох хууль, журмын дагуу гүйцэтгэх"
-          ],
-          contact: {
-            person: "Төлөвлөгөө, тайлан хариуцсан мэргэжилтний албан үүргийг түр орлон гүйцэтгэгч Б.Мөнхдэлгэр",
-            room: "716 тоот өрөө",
-            phone: "75757807"
-          }
-        }
-      ]
+  const fetchDepartments = async () => {
+    try {
+      const res = await fetch('/api/departments');
+      if (res.ok) {
+        const data = await res.json();
+        setDepartments(data);
+      }
+    } catch (error) {
+      console.error('Error fetching departments:', error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const handleDeptClick = (dept: Department) => {
+    setSelectedDept(dept);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => setSelectedDept(null), 300);
+  };
+
+  const director = departments.find(d => d.is_director);
+  const regularDepts = departments.filter(d => !d.is_director);
+
+  if (loading) {
+    return (
+      <Container>
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+            <p className="text-gray-600">Уншиж байна...</p>
+          </div>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <Container>
@@ -59,163 +93,239 @@ export default async function StructurePage() {
             Бүтэц, зохион байгуулалт
           </h1>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Байгууллагын бүтэц, хэлтэсүүд, чиг үүрэг болон холбоо барих мэдээлэл
+            Хэлтэс дээр дарж дэлгэрэнгүй мэдээллийг харна уу
           </p>
         </div>
 
-        {/* Structure Content from Database */}
-        {structureContent && (
-          <Card className="mb-12 shadow-lg border-0">
-            <CardHeader className="bg-gradient-to-r from-[#24276B] to-[#3d42a0] text-white rounded-t-xl">
-              <CardTitle className="text-2xl flex items-center gap-3">
-                <FileText className="w-6 h-6" />
-                {structureContent.title || "Байгууллагын бүтэц"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div 
-                className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:text-gray-900 prose-ul:text-gray-700 prose-li:text-gray-700"
-                dangerouslySetInnerHTML={{ __html: structureContent.content || "" }}
-              />
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Organizational Structure */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
-            <Network className="w-8 h-8 text-[#24276B]" />
-            Байгууллагын бүтэц
-          </h2>
-
-          {/* Main Office Card */}
-          <Card className="mb-8 shadow-lg border-2 border-[#24276B]/10 hover:border-[#24276B]/30 transition-all duration-300">
-            <CardHeader className="bg-gradient-to-r from-[#24276B] to-[#3d42a0] text-white">
-              <CardTitle className="text-2xl flex items-center gap-3">
-                <Building2 className="w-7 h-7" />
-                {organizationStructure.mainOffice.name}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              {organizationStructure.mainOffice.departments.map((dept, index) => (
-                <div key={index} className="mb-8 last:mb-0">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-[#24276B]/10 rounded-lg">
-                      <Users className="w-5 h-5 text-[#24276B]" />
+        {/* Interactive Organization Chart */}
+        <div className="mb-16">
+          <div className="flex flex-col items-center">
+            {/* Top Level - Director */}
+            {director && (
+              <div className="relative mb-12">
+                <div 
+                  className={`bg-gradient-to-r ${director.color || 'from-[#24276B] to-[#3d42a0]'} text-white px-10 py-6 rounded-2xl shadow-xl cursor-pointer hover:scale-105 transition-transform duration-300`}
+                  onClick={() => handleDeptClick(director)}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-white/20 rounded-xl">
+                      <UserCircle className="w-8 h-8" />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900">{dept.name}</h3>
+                    <div>
+                      <p className="font-bold text-xl">{director.name}</p>
+                      <p className="text-white/80 text-sm">Удирдах түвшин</p>
+                    </div>
                   </div>
-
-                  {/* Responsibilities */}
-                  <div className="mb-6">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                      <Briefcase className="w-4 h-4" />
-                      Чиг үүрэг:
-                    </h4>
-                    <ul className="space-y-3 ml-6">
-                      {dept.responsibilities.map((resp, idx) => (
-                        <li key={idx} className="flex items-start gap-3 text-gray-700">
-                          <span className="w-2 h-2 rounded-full bg-[#24276B] mt-2 flex-shrink-0" />
-                          <span>{resp}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Contact Information */}
-                  {dept.contact && (
-                    <Card className="bg-gradient-to-br from-gray-50 to-gray-100/50 border border-gray-200">
-                      <CardContent className="pt-6">
-                        <h4 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-                          <Phone className="w-4 h-4" />
-                          Холбоо барих мэдээлэл:
-                        </h4>
-                        <div className="space-y-3">
-                          <div className="flex items-start gap-3">
-                            <UserCircle className="w-5 h-5 text-[#24276B] mt-0.5 flex-shrink-0" />
-                            <div>
-                              <p className="text-sm font-medium text-gray-900">Хариуцсан мэргэжилтэн:</p>
-                              <p className="text-gray-700">{dept.contact.person}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-start gap-3">
-                            <MapPin className="w-5 h-5 text-[#24276B] mt-0.5 flex-shrink-0" />
-                            <div>
-                              <p className="text-sm font-medium text-gray-900">Байршил:</p>
-                              <p className="text-gray-700">{dept.contact.room}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-start gap-3">
-                            <Phone className="w-5 h-5 text-[#24276B] mt-0.5 flex-shrink-0" />
-                            <div>
-                              <p className="text-sm font-medium text-gray-900">Утас:</p>
-                              <a href={`tel:${dept.contact.phone}`} className="text-[#24276B] hover:underline">
-                                {dept.contact.phone}
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
                 </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
+                
+                {/* Connector Line */}
+                {regularDepts.length > 0 && (
+                  <div className="absolute left-1/2 -bottom-12 w-0.5 h-12 bg-gradient-to-b from-[#24276B] to-gray-300 transform -translate-x-1/2" />
+                )}
+              </div>
+            )}
 
-        {/* Organizational Chart Visualization */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
-            <Network className="w-8 h-8 text-[#24276B]" />
-            Байгууллагын бүтцийн диаграм
-          </h2>
-          
-          <Card className="shadow-lg border-0">
-            <CardContent className="pt-8">
-              <div className="flex flex-col items-center">
-                {/* Top Level - Main Office */}
-                <div className="relative mb-8">
-                  <div className="bg-gradient-to-r from-[#24276B] to-[#3d42a0] text-white px-8 py-4 rounded-xl shadow-lg min-w-[300px] text-center">
-                    <Building2 className="w-6 h-6 mx-auto mb-2" />
-                    <p className="font-semibold text-lg">{organizationStructure.mainOffice.name}</p>
+            {/* Horizontal Connector */}
+            {regularDepts.length > 1 && (
+              <div className="hidden md:block w-2/3 h-0.5 bg-gray-300 mb-8 relative">
+                {regularDepts.map((_, idx) => (
+                  <div 
+                    key={idx}
+                    className="absolute top-1/2 w-3 h-3 bg-gray-300 rounded-full -translate-y-1/2"
+                    style={{ left: `${(idx / (regularDepts.length - 1)) * 100}%`, transform: 'translate(-50%, -50%)' }}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Department Level */}
+            <div className={`grid grid-cols-1 ${regularDepts.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-6 w-full max-w-5xl`}>
+              {regularDepts.map((dept) => (
+                <div 
+                  key={dept.id}
+                  onClick={() => handleDeptClick(dept)}
+                  className="group cursor-pointer"
+                >
+                  <div className={`
+                    bg-gradient-to-br ${dept.color || 'from-blue-500 to-blue-600'} text-white rounded-2xl p-6 shadow-lg
+                    transform transition-all duration-300
+                    hover:scale-105 hover:shadow-2xl
+                    relative overflow-hidden
+                  `}>
+                    {/* Background Pattern */}
+                    <div className="absolute inset-0 opacity-10">
+                      <div className="absolute -right-8 -top-8 w-32 h-32 bg-white rounded-full" />
+                      <div className="absolute -left-4 -bottom-4 w-24 h-24 bg-white rounded-full" />
+                    </div>
+                    
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-white/20 rounded-lg">
+                          <Users className="w-6 h-6" />
+                        </div>
+                        <ChevronRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity ml-auto" />
+                      </div>
+                      <h3 className="font-bold text-lg mb-2">{dept.short_name}</h3>
+                      <p className="text-white/80 text-sm line-clamp-2">{dept.description}</p>
+                    </div>
                   </div>
                   
-                  {/* Connector Line */}
-                  <div className="absolute left-1/2 -bottom-8 w-0.5 h-8 bg-gray-300 transform -translate-x-1/2" />
+                  {/* Vertical Connector for mobile */}
+                  <div className="md:hidden flex justify-center">
+                    <div className="w-0.5 h-6 bg-gray-300 my-2" />
+                  </div>
                 </div>
+              ))}
+            </div>
 
-                {/* Department Level */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-5xl">
-                  {organizationStructure.mainOffice.departments.map((dept, index) => (
-                    <div key={index} className="relative">
-                      <div className="bg-white border-2 border-[#24276B]/20 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300 text-center">
-                        <Users className="w-8 h-8 mx-auto mb-3 text-[#24276B]" />
-                        <p className="font-semibold text-gray-900">{dept.name}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            {departments.length === 0 && (
+              <div className="text-center py-12">
+                <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">Бүтцийн мэдээлэл оруулаагүй байна</p>
+                <p className="text-sm text-gray-400 mt-2">Админ хэсгээс хэлтсүүдийг нэмнэ үү</p>
               </div>
-            </CardContent>
-          </Card>
+            )}
+          </div>
         </div>
 
-        {/* Additional Information */}
-        <Card className="bg-gradient-to-br from-[#24276B]/5 to-[#3d42a0]/5 border border-[#24276B]/20">
-          <CardContent className="pt-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Mail className="w-5 h-5 text-[#24276B]" />
-              Дэлгэрэнгүй мэдээлэл авах
-            </h3>
-            <p className="text-gray-700 leading-relaxed">
-              Байгууллагын бүтэц, зохион байгуулалт, чиг үүрэгтэй холбоотой дэлгэрэнгүй мэдээллийг 
-              дээрх холбоо барих мэдээллээр авах боломжтой. Бид таны асуулт, санал хүсэлтийг хүлээн авч, 
-              хариу өгөхөд бэлэн байна.
-            </p>
-          </CardContent>
-        </Card>
+        {/* Info Section */}
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-blue-100 rounded-xl">
+              <Mail className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Дэлгэрэнгүй мэдээлэл
+              </h3>
+              <p className="text-gray-600">
+                Дээрх хэлтсүүд дээр дарж холбоо барих мэдээлэл, чиг үүрэг зэргийг харна уу.
+                Асуулт байвал холбогдох хэлтэст хандана уу.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Department Detail Modal */}
+      {isModalOpen && selectedDept && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={closeModal}
+        >
+          <div 
+            className={`
+              bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl
+              transform transition-all duration-300
+              ${isModalOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}
+            `}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className={`bg-gradient-to-r ${selectedDept.color || 'from-blue-500 to-blue-600'} text-white p-6`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-white/20 rounded-xl">
+                    <Users className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold">{selectedDept.name}</h2>
+                    <p className="text-white/80">{selectedDept.contact_position}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={closeModal}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              {/* Description */}
+              <p className="text-gray-600 mb-6">{selectedDept.description}</p>
+
+              {/* Responsibilities */}
+              {selectedDept.responsibilities && selectedDept.responsibilities.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <Briefcase className="w-5 h-5 text-gray-600" />
+                    Чиг үүрэг
+                  </h3>
+                  <ul className="space-y-3">
+                    {selectedDept.responsibilities.map((resp, idx) => (
+                      <li key={idx} className="flex items-start gap-3 text-gray-700">
+                        <span className={`w-2 h-2 rounded-full bg-gradient-to-r ${selectedDept.color || 'from-blue-500 to-blue-600'} mt-2 flex-shrink-0`} />
+                        <span>{resp}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Contact Information */}
+              <div className="bg-gray-50 rounded-2xl p-6">
+                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Phone className="w-5 h-5 text-gray-600" />
+                  Холбоо барих
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {selectedDept.contact_person && (
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-white rounded-lg shadow-sm">
+                        <UserCircle className="w-5 h-5 text-gray-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Хариуцсан ажилтан</p>
+                        <p className="font-medium text-gray-900">{selectedDept.contact_person}</p>
+                      </div>
+                    </div>
+                  )}
+                  {selectedDept.contact_room && (
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-white rounded-lg shadow-sm">
+                        <MapPin className="w-5 h-5 text-gray-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Байршил</p>
+                        <p className="font-medium text-gray-900">{selectedDept.contact_room}</p>
+                      </div>
+                    </div>
+                  )}
+                  {selectedDept.contact_phone && (
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-white rounded-lg shadow-sm">
+                        <Phone className="w-5 h-5 text-gray-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Утас</p>
+                        <a href={`tel:${selectedDept.contact_phone}`} className="font-medium text-blue-600 hover:underline">
+                          {selectedDept.contact_phone}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  {selectedDept.contact_email && (
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-white rounded-lg shadow-sm">
+                        <Mail className="w-5 h-5 text-gray-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">И-мэйл</p>
+                        <a href={`mailto:${selectedDept.contact_email}`} className="font-medium text-blue-600 hover:underline">
+                          {selectedDept.contact_email}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Container>
   );
 }
