@@ -64,6 +64,11 @@ export const Category = [
     href: "zovlomj",
     mongolian_name: "Захиалагчдад зөвлөмж",
   },
+  {
+    id: 14,
+    href: "tender-urilga",
+    mongolian_name: "Тендерийн урилга",
+  },
 ];
 
 export const GetCategoryById = (id: number) => {

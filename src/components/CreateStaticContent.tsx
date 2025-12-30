@@ -11,13 +11,14 @@ import { Plus } from 'lucide-react';
 
 interface CreateStaticContentProps {
   onSuccess: () => void;
+  defaultType?: string;
 }
 
-export function CreateStaticContent({ onSuccess }: CreateStaticContentProps) {
+export function CreateStaticContent({ onSuccess, defaultType }: CreateStaticContentProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [type, setType] = useState<string>('');
+  const [type, setType] = useState<string>(defaultType || '');
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSubmit = async () => {

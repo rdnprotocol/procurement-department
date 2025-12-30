@@ -115,6 +115,8 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: url('/tumen-nasan.png') top left / 300px repeat fixed;
+    background-color: #f8fafc;
   }
 }

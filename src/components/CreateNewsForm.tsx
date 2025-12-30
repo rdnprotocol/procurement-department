@@ -1,20 +1,29 @@
 "use client";
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Category } from '@/utils/category';
+import { Plus } from 'lucide-react';
 
-export default function CreateNewsForm() {
+interface CreateNewsFormProps {
+  defaultCategoryId?: number;
+  buttonText?: ReactNode;
+  buttonClassName?: string;
+}
+
+export default function CreateNewsForm({ defaultCategoryId, buttonText, buttonClassName }: CreateNewsFormProps) {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     content: '',
     file: null as File | null,
-    category_id: ''
+    category_id: defaultCategoryId ? defaultCategoryId.toString() : ''
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -56,6 +65,7 @@ export default function CreateNewsForm() {
       router.refresh();
       
       alert('Мэдээ амжилттай нэмэгдлээ');
+      setOpen(false);
     } catch (error) {
       console.error('Error:', error);
       alert('Алдаа гарлаа: ' + (error as Error).message);
@@ -73,7 +83,7 @@ export default function CreateNewsForm() {
     }
   };
 
-  return (
+  const formContent = (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700">
@@ -156,4 +166,26 @@ export default function CreateNewsForm() {
       </Button>
     </form>
   );
+
+  // If buttonText is provided, wrap in dialog
+  if (buttonText !== undefined) {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <button className={buttonClassName}>
+            {buttonText}
+          </button>
+        </DialogTrigger>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Шинэ мэдээ нэмэх</DialogTitle>
+          </DialogHeader>
+          {formContent}
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // Default: return just the form
+  return formContent;
 }
