@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { FileText, Newspaper, Users, Building2 } from "lucide-react";
 
 export function StatsBanner() {
   const [tenderCount, setTenderCount] = useState(0);
   const [newsCount, setNewsCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     // Fetch counts from API
@@ -30,11 +32,28 @@ export function StatsBanner() {
     };
 
     fetchCounts();
-    setIsVisible(true);
+  }, []);
+
+  // Intersection Observer for animation trigger
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
   }, []);
 
   // Animated counter hook
-  const useCounter = (target: number, duration: number = 2000) => {
+  const useCounter = (target: number, duration: number = 2500) => {
     const [count, setCount] = useState(0);
 
     useEffect(() => {
@@ -48,8 +67,8 @@ export function StatsBanner() {
         const progress = Math.min((currentTime - startTime) / duration, 1);
         
         // Easing function for smooth animation
-        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-        setCount(Math.floor(easeOutQuart * target));
+        const easeOutExpo = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        setCount(Math.floor(easeOutExpo * target));
 
         if (progress < 1) {
           animationFrame = requestAnimationFrame(animate);
@@ -63,7 +82,7 @@ export function StatsBanner() {
           cancelAnimationFrame(animationFrame);
         }
       };
-    }, [target, duration, isVisible]);
+    }, [target, duration]);
 
     return count;
   };
@@ -71,57 +90,107 @@ export function StatsBanner() {
   const animatedTenderCount = useCounter(tenderCount);
   const animatedNewsCount = useCounter(newsCount);
 
+  const stats = [
+    {
+      icon: FileText,
+      count: animatedTenderCount,
+      label: "Тендерийн урилга",
+      color: "from-blue-500 to-blue-600",
+      delay: "0ms"
+    },
+    {
+      icon: Newspaper,
+      count: animatedNewsCount,
+      label: "Мэдээ, мэдээлэл",
+      color: "from-emerald-500 to-emerald-600",
+      delay: "100ms"
+    },
+    {
+      icon: Users,
+      count: 27,
+      label: "Сумдын тоо",
+      color: "from-amber-500 to-amber-600",
+      delay: "200ms"
+    },
+    {
+      icon: Building2,
+      count: 95,
+      label: "Ажилтнууд",
+      color: "from-purple-500 to-purple-600",
+      delay: "300ms"
+    }
+  ];
+
   return (
-    <section className="relative py-16 overflow-hidden">
+    <section ref={sectionRef} className="relative py-20 overflow-hidden">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
         style={{
           backgroundImage: "url('/tov-aimag.jpg')",
         }}
       />
       
-      {/* Blue Overlay */}
-      <div className="absolute inset-0 bg-blue-900/80 backdrop-blur-[2px]" />
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-blue-800/85 to-blue-900/90" />
+      
+      {/* Decorative Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
+      </div>
 
       {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
-          {/* Title Section */}
-          <div className="text-center md:text-left">
-            <h2 className="text-2xl md:text-3xl font-bold text-white leading-tight">
-              Иргэн төвтэй төрийн
-              <br />
-              үйлчилгээ
-            </h2>
-            <div className="w-16 h-1 bg-white mt-4 mx-auto md:mx-0 rounded-full" />
-          </div>
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Иргэн төвтэй төрийн үйлчилгээ
+          </h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-transparent via-white to-transparent mx-auto rounded-full" />
+          <p className="text-white/70 mt-4 max-w-2xl mx-auto">
+            Төв аймгийн Худалдан авах ажиллагааны газрын үйл ажиллагааны тоон мэдээлэл
+          </p>
+        </div>
 
-          {/* Stats */}
-          <div className="flex items-center gap-12 md:gap-16">
-            {/* Tender Invitations */}
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">
-                {animatedTenderCount > 0 ? `${animatedTenderCount}+` : "0+"}
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          {stats.map((stat, index) => {
+            const Icon = stat.icon;
+            return (
+              <div
+                key={index}
+                className={`
+                  group relative bg-white/10 backdrop-blur-md rounded-2xl p-6 
+                  border border-white/20 hover:border-white/40
+                  transform transition-all duration-500 hover:scale-105 hover:-translate-y-1
+                  ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
+                `}
+                style={{ 
+                  transitionDelay: stat.delay,
+                }}
+              >
+                {/* Hover Glow Effect */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-20 rounded-2xl transition-opacity duration-300`} />
+                
+                {/* Icon */}
+                <div className={`w-14 h-14 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                  <Icon className="w-7 h-7 text-white" />
+                </div>
+                
+                {/* Count */}
+                <div className="text-3xl md:text-4xl font-bold text-white mb-1 tracking-tight">
+                  {stat.count > 0 ? stat.count.toLocaleString() : "0"}
+                  <span className="text-2xl text-white/60">+</span>
+                </div>
+                
+                {/* Label */}
+                <div className="text-sm text-white/70 font-medium">
+                  {stat.label}
+                </div>
               </div>
-              <div className="text-sm md:text-base text-white/80 font-medium">
-                Тендерийн урилга
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="w-px h-16 bg-white/30 hidden md:block" />
-
-            {/* News & Information */}
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">
-                {animatedNewsCount > 0 ? `${animatedNewsCount}+` : "0+"}
-              </div>
-              <div className="text-sm md:text-base text-white/80 font-medium">
-                Мэдээ, мэдээлэл
-              </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
     </section>
