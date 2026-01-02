@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Roboto_Condensed } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
-import { Footer, NavBar } from "@/components";
+import { Footer, NavBar, QuickLinksSidebar } from "@/components";
 import { headers } from "next/headers";
 
 const robotoCondensed = Roboto_Condensed({
@@ -37,7 +37,12 @@ export default async function RootLayout({
         <div className={isAdminPage ? "" : "min-h-[calc(100vh-360px-125px)]"}>
           {children}
         </div>
-        {!isAdminPage && <Footer />}
+        {!isAdminPage && (
+          <>
+            <QuickLinksSidebar />
+            <Footer />
+          </>
+        )}
         <Toaster richColors position="top-center" />
       </body>
     </html>

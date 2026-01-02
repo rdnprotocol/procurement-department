@@ -14,3 +14,4 @@ export * from "./NewsSection";
 export * from "./FAQSection";
 export * from "./FeedbackSection";
 export * from "./StatsBanner";
+export * from "./QuickLinksSidebar";

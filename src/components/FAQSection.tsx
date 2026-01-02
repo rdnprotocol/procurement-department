@@ -51,7 +51,7 @@ export function FAQSection() {
   };
 
   return (
-    <section className="py-12">
+    <section id="faq" className="py-12 scroll-mt-20">
       {/* Title */}
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold text-gray-900 mb-3">
