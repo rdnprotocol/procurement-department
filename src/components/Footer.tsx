@@ -3,6 +3,7 @@ import { Earth, Mail, MapPin, PhoneCall } from "lucide-react";
 import { Separator } from "./ui/separator";
 import Image from "next/image";
 import { FaFacebook, FaTwitter, FaYoutube } from "react-icons/fa";
+import { VisitorStats } from "./VisitorStats";
 
 export const Footer = () => {
   return (
@@ -84,6 +85,11 @@ export const Footer = () => {
                   <p>www.tuvprocurement@tov.gov.mn</p>
                 </div>
               </a>
+            </div>
+            
+            {/* Хандалтын тоо */}
+            <div className="lg:ml-auto">
+              <VisitorStats />
             </div>
           </div>
           <div>
