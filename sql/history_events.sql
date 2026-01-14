@@ -52,3 +52,7 @@ CREATE TRIGGER history_events_updated_at_trigger
     FOR EACH ROW
     EXECUTE FUNCTION update_history_events_updated_at();
 
+
+
+
+

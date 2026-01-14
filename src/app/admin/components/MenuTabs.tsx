@@ -49,3 +49,7 @@ export function MenuTabs({ menuGroups, activeMenuTab, onTabChange }: MenuTabsPro
 
 
 
+
+
+
+

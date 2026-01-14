@@ -99,11 +99,15 @@ export async function POST(req: Request) {
 
     // Cookie дээр token хадгалах
     const response = NextResponse.json({ message: "Амжилттай нэвтэрлээ" });
+    
+    // HTTPS байгаа эсэхийг шалгах (domain тохируулагдсан үед secure: true болно)
+    const isSecure = process.env.NODE_ENV === "production" && process.env.USE_SECURE_COOKIES === "true";
+    
     response.cookies.set({
       name: "token",
       value: token,
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isSecure, // Domain + HTTPS тохируулсны дараа USE_SECURE_COOKIES=true болго
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7, // 7 өдөр
       path: "/",

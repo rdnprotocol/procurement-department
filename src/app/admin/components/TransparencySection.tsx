@@ -111,3 +111,7 @@ export function TransparencySection({ allContents }: TransparencySectionProps) {
 
 
 
+
+
+
+
