@@ -6,8 +6,14 @@ const JWT_SECRET = process.env.JWT_SECRET || "procurement-department";
 
 // Эрх шалгах middleware
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  
+  // Request headers-д pathname нэмэх (бүх route-д)
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-pathname', pathname);
+
   // Admin хуудас руу хандсан эсэхийг шалгах
-  if (request.nextUrl.pathname.startsWith('/admin')) {
+  if (pathname.startsWith('/admin')) {
     console.log('Middleware: Checking admin access...');
     
     const token = request.cookies.get('token')?.value;
@@ -34,9 +40,11 @@ export async function middleware(request: NextRequest) {
       }
       
       console.log('Middleware: Access granted');
-      const response = NextResponse.next();
-      response.headers.set('x-pathname', request.nextUrl.pathname);
-      return response;
+      return NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
     } catch (error) {
       // Token хүчингүй бол login хуудас руу чиглүүлэх
       console.error('Middleware: Token verification failed:', error);
@@ -44,12 +52,25 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  const response = NextResponse.next();
-  response.headers.set('x-pathname', request.nextUrl.pathname);
-  return response;
+  // Бусад хуудсуудад headers дамжуулах
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
-// Middleware ажиллах route-уудыг тодорхойлох
+// Middleware бүх route дээр ажиллах (static files-аас бусад)
 export const config = {
-  matcher: ['/admin/:path*']
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder files
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|pdf)$).*)',
+  ],
 }
