@@ -14,6 +14,7 @@ import {
   Scale,
   Shield,
   ClipboardList,
+  MapPin,
   ChevronRight,
   ChevronDown,
   LogOut,
@@ -26,6 +27,7 @@ import {
 } from 'lucide-react';
 import { LawDocumentsSection } from './components/LawDocumentsSection';
 import { Category, GetIdByHref } from "@/utils/category";
+import { PROVINCES } from "@/utils/provinces";
 import CreateNewsForm from '@/components/CreateNewsForm';
 import { useRouter } from 'next/navigation';
 import { RichTextEditor } from '@/components/RichTextEditor';
@@ -154,8 +156,9 @@ const menuStructure: Record<string, MenuSection> = {
     icon: ClipboardList,
     color: 'orange',
     items: [
-      { title: 'A3 гэрчилгээтэй хүний нөөц', href: '/category/a3-gerchilgee', type: 'category', categoryHref: 'a3-gerchilgee' },
-      { title: 'Захиалагчдад зөвлөмж', href: '/category/zovlomj', type: 'category', categoryHref: 'zovlomj' },
+      { title: 'Төлөвлөгөө, тайлан', href: '/activities/tender/plan', type: 'static', staticTypes: ['tender-plan'] },
+      { title: 'A3 гэрчилгээтэй хүний нөөц', href: '/activities/tender/a3', type: 'static', staticTypes: ['tender-a3'] },
+      { title: 'Захиалагчдад зөвлөмж', href: '/activities/tender/zovlomj', type: 'static', staticTypes: ['tender-zovlomj'] },
     ]
   },
   anticorruption: {
@@ -166,6 +169,17 @@ const menuStructure: Record<string, MenuSection> = {
       { title: 'Төлөвлөгөө, тайлан', href: '/category/at-tolovlogoo-tailan', type: 'category', categoryHref: 'at-tolovlogoo-tailan' },
       { title: 'Хасум хянасан дүгнэлт', href: '/category/hasum-report', type: 'category', categoryHref: 'hasum-report' },
     ]
+  },
+  province: {
+    title: 'Сумд',
+    icon: MapPin,
+    color: 'emerald',
+    items: PROVINCES.map((p) => ({
+      title: p.title,
+      href: `/province/${p.slug}`,
+      type: 'static' as const,
+      staticTypes: [`province-${p.slug}-plans`, `province-${p.slug}-tender`],
+    })),
   },
 };
 
@@ -213,7 +227,18 @@ const staticTypeLabels: Record<string, string> = {
   'stats-intro': 'Статистик танилцуулга',
   'stats-procurement': 'Худалдан авалтын статистик',
   'stats-annual': 'Жилийн статистик',
+
+  // Тендер
+  'tender-plan': 'Тендер - Төлөвлөгөө, тайлан',
+  'tender-a3': 'Тендер - A3 гэрчилгээтэй хүний нөөц',
+  'tender-zovlomj': 'Тендер - Захиалагчдад зөвлөмж',
 };
+
+// Add labels for province content types (plans + tender) programmatically
+for (const p of PROVINCES) {
+  staticTypeLabels[`province-${p.slug}-plans`] = `${p.title} - Төлөвлөгөө`;
+  staticTypeLabels[`province-${p.slug}-tender`] = `${p.title} - Тендер шалгаруулалт`;
+}
 
 // Хэлтсийн interface - API-аас ирэх формат
 interface DepartmentAPI {

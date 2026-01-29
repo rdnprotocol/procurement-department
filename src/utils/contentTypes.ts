@@ -7,6 +7,8 @@ export interface ContentType {
   description?: string;
 }
 
+import { PROVINCES } from './provinces';
+
 // Бүх статик контент төрлүүд
 export const STATIC_CONTENT_TYPES: ContentType[] = [
   // Бидний тухай
@@ -61,6 +63,17 @@ export const STATIC_CONTENT_TYPES: ContentType[] = [
   { value: 'stats-intro', label: 'Статистик танилцуулга', group: 'Статистик мэдээ', description: 'Статистик мэдээний танилцуулга' },
   { value: 'stats-procurement', label: 'Худалдан авалтын статистик', group: 'Статистик мэдээ', description: 'Худалдан авалтын статистик мэдээ' },
   { value: 'stats-annual', label: 'Жилийн статистик', group: 'Статистик мэдээ', description: 'Жилийн нэгдсэн статистик' },
+
+  // Тендер
+  { value: 'tender-plan', label: 'Төлөвлөгөө, тайлан', group: 'Тендер', description: 'Тендер - төлөвлөгөө, тайлан' },
+  { value: 'tender-a3', label: 'A3 гэрчилгээтэй хүний нөөц', group: 'Тендер', description: 'Тендер - A3 гэрчилгээтэй хүний нөөц' },
+  { value: 'tender-zovlomj', label: 'Захиалагчдад зөвлөмж', group: 'Тендер', description: 'Тендер - Захиалагчдад зөвлөмж' },
+
+  // Сумд (plans + tender result)
+  ...PROVINCES.flatMap((p) => ([
+    { value: `province-${p.slug}-plans`, label: `${p.title} - Төлөвлөгөө`, group: 'Сумд', description: `${p.title} сумын төлөвлөгөө` },
+    { value: `province-${p.slug}-tender`, label: `${p.title} - Тендер шалгаруулалт`, group: 'Сумд', description: `${p.title} сумын тендер шалгаруулалтын мэдээлэл` },
+  ])),
 ];
 
 // Төрлөөр бүлэглэх
