@@ -6,6 +6,7 @@ import { Container, Loading } from "@/components/assets";
 import { Calendar } from "@/components/ui/calendar";
 import { Separator } from "@/components/ui/separator";
 import { GetMongolianNameById } from "@/utils/category";
+import { enhanceHtmlForInlinePdfEmbeds } from "@/utils/enhanceHtml";
 import { Clock, Folder } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
@@ -155,7 +156,7 @@ export default function NewsDetailsPage() {
             {content.content && (
               <div 
                 className="prose prose-lg max-w-none text-gray-800"
-                dangerouslySetInnerHTML={{ __html: content.content }}
+                dangerouslySetInnerHTML={{ __html: enhanceHtmlForInlinePdfEmbeds(content.content) }}
               />
             )}
 

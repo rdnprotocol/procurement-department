@@ -3,13 +3,13 @@ import { Container } from "@/components/assets";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Search, 
-  FileText, 
   ClipboardCheck, 
   Building2,
   ArrowRight,
   ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
+import { enhanceHtmlForInlinePdfEmbeds } from "@/utils/enhanceHtml";
 
 export const metadata = {
   title: "Хяналт шалгалт | Худалдан авах ажиллагааны газар",
@@ -28,6 +28,7 @@ interface StaticContent {
 const monitoringSections = [
   {
     type: "monitoring-intro",
+    sectionId: "intro",
     title: "Танилцуулга",
     icon: Search,
     color: "from-emerald-500 to-emerald-600",
@@ -36,6 +37,7 @@ const monitoringSections = [
   },
   {
     type: "monitoring-internal",
+    sectionId: "internal",
     title: "Дотоод хяналт-шинжилгээ үнэлгээ",
     icon: ClipboardCheck,
     color: "from-blue-500 to-blue-600",
@@ -44,6 +46,7 @@ const monitoringSections = [
   },
   {
     type: "monitoring-government",
+    sectionId: "government",
     title: "Төрийн байгууллагын хяналт, дүгнэлт",
     icon: Building2,
     color: "from-purple-500 to-purple-600",
@@ -52,6 +55,7 @@ const monitoringSections = [
   },
   {
     type: "monitoring-client",
+    sectionId: "client",
     title: "Захиалагчдад хийгдсэн хяналт, шалгалт, тайлан",
     icon: ShieldCheck,
     color: "from-orange-500 to-orange-600",
@@ -113,7 +117,7 @@ export default async function MonitoringPage() {
             const hasData = hasContent(section.type);
 
             return (
-              <Card key={section.type} className="border-0 shadow-lg overflow-hidden">
+              <Card key={section.type} id={section.sectionId} className="border-0 shadow-lg overflow-hidden scroll-mt-24">
                 <CardHeader className={`bg-gradient-to-r ${section.color} text-white p-5`}>
                   <CardTitle className="text-lg font-semibold flex items-center gap-3">
                     <Icon className="w-6 h-6" />
@@ -124,7 +128,7 @@ export default async function MonitoringPage() {
                   {hasData ? (
                     <div 
                       className="prose max-w-none prose-headings:text-gray-900 prose-p:text-gray-700"
-                      dangerouslySetInnerHTML={{ __html: content!.content }}
+                      dangerouslySetInnerHTML={{ __html: enhanceHtmlForInlinePdfEmbeds(content!.content) }}
                     />
                   ) : (
                     <div className="text-center py-8">

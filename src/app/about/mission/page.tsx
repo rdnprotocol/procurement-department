@@ -2,6 +2,7 @@ import { createSupabaseServerClient } from "@/lib/supabaseClient";
 import { Container } from "@/components/assets";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, Eye, TrendingUp } from "lucide-react";
+import { enhanceHtmlForInlinePdfEmbeds } from "@/utils/enhanceHtml";
 
 export const revalidate = 3600; // 1 цаг тутамд revalidate хийнэ
 
@@ -90,7 +91,7 @@ export default async function MissionPage() {
                 <CardContent className="relative z-10">
                   <div 
                     className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:text-gray-900 prose-ul:text-gray-700 prose-li:text-gray-700"
-                    dangerouslySetInnerHTML={{ __html: displayContent }}
+                    dangerouslySetInnerHTML={{ __html: enhanceHtmlForInlinePdfEmbeds(displayContent) }}
                   />
                 </CardContent>
 

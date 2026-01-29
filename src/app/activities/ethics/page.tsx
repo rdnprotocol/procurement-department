@@ -10,6 +10,7 @@ import {
   BookOpen
 } from "lucide-react";
 import Link from "next/link";
+import { enhanceHtmlForInlinePdfEmbeds } from "@/utils/enhanceHtml";
 
 export const metadata = {
   title: "Ёс зүйн дэд хороо | Худалдан авах ажиллагааны газар",
@@ -28,6 +29,7 @@ interface StaticContent {
 const ethicsSections = [
   {
     type: "ethics-intro",
+    sectionId: "intro",
     title: "Танилцуулга",
     icon: Scale,
     color: "from-indigo-500 to-indigo-600",
@@ -36,6 +38,7 @@ const ethicsSections = [
   },
   {
     type: "ethics-activity",
+    sectionId: "activity",
     title: "Үйл ажиллагаа",
     icon: FileText,
     color: "from-violet-500 to-violet-600",
@@ -44,6 +47,7 @@ const ethicsSections = [
   },
   {
     type: "ethics-members",
+    sectionId: "members",
     title: "Бүрэлдэхүүн",
     icon: Users,
     color: "from-rose-500 to-rose-600",
@@ -143,7 +147,7 @@ export default async function EthicsPage() {
             const hasData = hasContent(section.type);
 
             return (
-              <Card key={section.type} className="border-0 shadow-lg overflow-hidden">
+              <Card key={section.type} id={section.sectionId} className="border-0 shadow-lg overflow-hidden scroll-mt-24">
                 <CardHeader className={`bg-gradient-to-r ${section.color} text-white p-5`}>
                   <CardTitle className="text-lg font-semibold flex items-center gap-3">
                     <Icon className="w-6 h-6" />
@@ -154,7 +158,7 @@ export default async function EthicsPage() {
                   {hasData ? (
                     <div 
                       className="prose max-w-none prose-headings:text-gray-900 prose-p:text-gray-700"
-                      dangerouslySetInnerHTML={{ __html: content!.content }}
+                      dangerouslySetInnerHTML={{ __html: enhanceHtmlForInlinePdfEmbeds(content!.content) }}
                     />
                   ) : (
                     <div className="text-center py-8">

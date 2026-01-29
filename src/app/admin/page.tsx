@@ -22,14 +22,13 @@ import {
   Building2,
   Save,
   X,
-  Clock,
-  Users,
-  ClipboardCheck
+  Clock
 } from 'lucide-react';
 import { LawDocumentsSection } from './components/LawDocumentsSection';
 import { Category, GetIdByHref } from "@/utils/category";
 import CreateNewsForm from '@/components/CreateNewsForm';
 import { useRouter } from 'next/navigation';
+import { RichTextEditor } from '@/components/RichTextEditor';
 
 interface StaticContent {
   id: number;
@@ -124,53 +123,30 @@ const menuStructure: Record<string, MenuSection> = {
       { title: 'Видео мэдээ', href: '/category/video-medee', type: 'category', categoryHref: 'video-medee' },
     ]
   },
-  // Үйл ажиллагааны ил тод байдал - category based
+  // Ил тод байдал - бүх холбогдох цэсүүдийг нэгтгэсэн
   transparency: {
-    title: 'Үйл ажиллагааны ил тод байдал',
+    title: 'Ил тод байдал',
     icon: Eye,
     color: 'indigo',
     items: [
-      { title: 'Бодлогын баримт бичиг, хууль тогтоомж', href: '/category/strateg-tolovlogoo-tailan', type: 'category', categoryHref: 'strateg-tolovlogoo-tailan' },
-      { title: 'Стратеги төлөвлөгөө', href: '/category/strateg-tolovlogoo', type: 'category', categoryHref: 'strateg-tolovlogoo' },
-      { title: 'Төлөвлөгөө, тайлан', href: '/category/tolovlogoo-tailan', type: 'category', categoryHref: 'tolovlogoo-tailan' },
-      { title: 'Статистик мэдээ', href: '/category/statistic', type: 'category', categoryHref: 'statistic' },
+      // Бодлогын баримт бичиг - Static контент
+      { title: 'Бодлогын баримт бичиг', href: '/activities/transparency/policy', type: 'static', staticTypes: ['policy-intro', 'policy-documents', 'policy-rules'] },
+      // Стратеги төлөвлөгөө - Static контент
+      { title: 'Стратеги төлөвлөгөө', href: '/activities/transparency/strategy', type: 'static', staticTypes: ['strategy-intro', 'strategy-goals', 'strategy-plan'] },
+      // Төлөвлөгөө, тайлан - Static контент
+      { title: 'Төлөвлөгөө, тайлан', href: '/activities/transparency/plan', type: 'static', staticTypes: ['plan-intro', 'plan-annual', 'plan-report'] },
+      // Статистик мэдээ - Static контент
+      { title: 'Статистик мэдээ', href: '/activities/transparency/statistics', type: 'static', staticTypes: ['stats-intro', 'stats-procurement', 'stats-annual'] },
+      // Өргөдөл гомдол
       { title: 'Өргөдөл, гомдлын шийдвэрлэлт', href: '/activities/transparency/complaints', type: 'static', staticTypes: ['complaints-intro', 'complaints-report'] },
+      // Иргэд хүлээн авах
       { title: 'Иргэд хүлээн авах уулзалт', href: '/activities/transparency/meetings', type: 'static', staticTypes: ['meetings-intro', 'meetings-schedule'] },
-    ]
-  },
-  // Хүний нөөц
-  hr: {
-    title: 'Хүний нөөц',
-    icon: Users,
-    color: 'blue',
-    items: [
-      { title: 'Хүний нөөц танилцуулга', href: '/activities/transparency/hr', type: 'static', staticTypes: ['hr-intro'] },
-      { title: 'Төлөвлөгөө', href: '/activities/transparency/hr', type: 'static', staticTypes: ['hr-plan'] },
-      { title: 'Тайлан', href: '/activities/transparency/hr', type: 'static', staticTypes: ['hr-report'] },
-      { title: 'Статистик мэдээ', href: '/activities/transparency/hr', type: 'static', staticTypes: ['hr-stats'] },
-    ]
-  },
-  // Хяналт шалгалт
-  monitoring: {
-    title: 'Хяналт шалгалт',
-    icon: ClipboardCheck,
-    color: 'emerald',
-    items: [
-      { title: 'Хяналт шалгалт танилцуулга', href: '/activities/monitoring', type: 'static', staticTypes: ['monitoring-intro'] },
-      { title: 'Дотоод хяналт-шинжилгээ үнэлгээ', href: '/activities/monitoring', type: 'static', staticTypes: ['monitoring-internal'] },
-      { title: 'Төрийн байгууллагын хяналт, дүгнэлт', href: '/activities/monitoring', type: 'static', staticTypes: ['monitoring-government'] },
-      { title: 'Захиалагчдад хийгдсэн хяналт', href: '/activities/monitoring', type: 'static', staticTypes: ['monitoring-client'] },
-    ]
-  },
-  // Ёс зүйн дэд хороо
-  ethics: {
-    title: 'Ёс зүйн дэд хороо',
-    icon: Scale,
-    color: 'violet',
-    items: [
-      { title: 'Ёс зүй танилцуулга', href: '/activities/ethics', type: 'static', staticTypes: ['ethics-intro'] },
-      { title: 'Үйл ажиллагаа', href: '/activities/ethics', type: 'static', staticTypes: ['ethics-activity'] },
-      { title: 'Бүрэлдэхүүн', href: '/activities/ethics', type: 'static', staticTypes: ['ethics-members'] },
+      // Хүний нөөц
+      { title: 'Хүний нөөц', href: '/activities/transparency/hr', type: 'static', staticTypes: ['hr-intro', 'hr-plan', 'hr-report', 'hr-stats'] },
+      // Хяналт шалгалт
+      { title: 'Хяналт шалгалт', href: '/activities/monitoring', type: 'static', staticTypes: ['monitoring-intro', 'monitoring-internal', 'monitoring-government', 'monitoring-client'] },
+      // Ёс зүйн дэд хороо
+      { title: 'Ёс зүйн дэд хороо', href: '/activities/ethics', type: 'static', staticTypes: ['ethics-intro', 'ethics-activity', 'ethics-members'] },
     ]
   },
   tender: {
@@ -221,6 +197,22 @@ const staticTypeLabels: Record<string, string> = {
   // Иргэд хүлээн авах
   'meetings-intro': 'Уулзалт танилцуулга',
   'meetings-schedule': 'Уулзалтын хуваарь',
+  // Бодлогын баримт бичиг
+  'policy-intro': 'Бодлогын баримт бичиг танилцуулга',
+  'policy-documents': 'Бодлогын баримт бичгүүд',
+  'policy-rules': 'Дотоод журам',
+  // Стратеги төлөвлөгөө
+  'strategy-intro': 'Стратеги танилцуулга',
+  'strategy-goals': 'Стратегийн зорилтууд',
+  'strategy-plan': 'Стратеги төлөвлөгөө',
+  // Төлөвлөгөө тайлан
+  'plan-intro': 'Төлөвлөгөө тайлан танилцуулга',
+  'plan-annual': 'Жилийн төлөвлөгөө',
+  'plan-report': 'Гүйцэтгэлийн тайлан',
+  // Статистик мэдээ
+  'stats-intro': 'Статистик танилцуулга',
+  'stats-procurement': 'Худалдан авалтын статистик',
+  'stats-annual': 'Жилийн статистик',
 };
 
 // Хэлтсийн interface - API-аас ирэх формат
@@ -521,10 +513,20 @@ export default function AdminPage() {
     if (!confirm('Устгахдаа итгэлтэй байна уу?')) return;
     try {
       const url = type === 'static' ? `/api/static-content/${id}` : `/api/content/${id}`;
-      await fetch(url, { method: 'DELETE' });
+      const res = await fetch(url, { method: 'DELETE' });
+      if (!res.ok) {
+        let message = 'Устгах үед алдаа гарлаа';
+        try {
+          const data = await res.json();
+          message = data?.error || message;
+        } catch {}
+        alert(message);
+        return;
+      }
       await fetchData();
     } catch (error) {
       console.error('Error deleting:', error);
+      alert('Устгах үед алдаа гарлаа');
     }
   };
 
@@ -779,47 +781,97 @@ export default function AdminPage() {
                       {/* Expanded Content */}
                       {isExpanded && (
                         <div className="border-t bg-gray-50 p-5">
+                          {/* Header with page link */}
+                          {item.type === 'static' && (
+                            <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+                              <p className="text-sm text-gray-600">
+                                {item.staticTypes?.length || 0} контент
+                              </p>
+                              <a
+                                href={item.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 px-3 py-1.5 text-sm text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                                Хуудас харах
+                              </a>
+                            </div>
+                          )}
+                          
                           {/* Static Content */}
                           {item.type === 'static' && item.staticTypes && (
-                            <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {item.staticTypes.map(type => {
                                 const content = getStaticByType(type);
+                                const hasData = content && content.content;
                                 return (
-                                  <div key={type} className="bg-white rounded-lg border p-4">
-                                    <div className="flex items-center justify-between mb-3">
-                                      <h4 className="font-medium text-gray-900">{staticTypeLabels[type]}</h4>
-                                      {content && (
-                                        <div className="flex gap-2">
-                                          <button
-                                            onClick={() => handleEditStatic(content)}
-                                            className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
-                                          >
-                                            <Edit3 className="w-4 h-4" />
-                                            Засах
-                                          </button>
-                                          <button
-                                            onClick={() => handleDelete(content.id, 'static')}
-                                            className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg"
-                                          >
-                                            <Trash2 className="w-4 h-4" />
-                                          </button>
+                                  <div 
+                                    key={type} 
+                                    className={`bg-white rounded-xl border-2 p-5 transition-all hover:shadow-md ${
+                                      hasData ? 'border-green-200' : 'border-orange-200'
+                                    }`}
+                                  >
+                                    {/* Card Header */}
+                                    <div className="flex items-start justify-between mb-3">
+                                      <div className="flex items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                                          hasData ? 'bg-green-100' : 'bg-orange-100'
+                                        }`}>
+                                          <FileText className={`w-5 h-5 ${hasData ? 'text-green-600' : 'text-orange-600'}`} />
                                         </div>
-                                      )}
+                                        <div>
+                                          <h4 className="font-semibold text-gray-900">{staticTypeLabels[type]}</h4>
+                                          <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                            hasData 
+                                              ? 'bg-green-100 text-green-700' 
+                                              : 'bg-orange-100 text-orange-700'
+                                          }`}>
+                                            {hasData ? 'Бүртгэлтэй' : 'Хоосон'}
+                                          </span>
+                                        </div>
+                                      </div>
                                     </div>
+                                    
+                                    {/* Content Preview */}
                                     {content ? (
-                                      <div>
-                                        <p className="text-sm text-gray-600 mb-2"><strong>Гарчиг:</strong> {content.title}</p>
-                                        <div 
-                                          className="text-sm text-gray-500 line-clamp-2"
-                                          dangerouslySetInnerHTML={{ __html: content.content || '<em>Агуулга байхгүй</em>' }}
-                                        />
-                                        <p className="text-xs text-gray-400 mt-2">
-                                          Шинэчилсэн: {new Date(content.updated_at).toLocaleDateString('mn-MN')}
-                                        </p>
+                                      <div className="space-y-3">
+                                        <div className="text-sm text-gray-600">
+                                          <span className="font-medium">Гарчиг:</span> {content.title}
+                                        </div>
+                                        {hasData ? (
+                                          <div 
+                                            className="text-sm text-gray-500 line-clamp-2 bg-gray-50 p-2 rounded-lg"
+                                            dangerouslySetInnerHTML={{ __html: content.content }}
+                                          />
+                                        ) : (
+                                          <p className="text-sm text-gray-400 italic">Агуулга оруулаагүй байна</p>
+                                        )}
+                                        <div className="flex items-center justify-between pt-2">
+                                          <p className="text-xs text-gray-400">
+                                            Шинэчилсэн: {new Date(content.updated_at).toLocaleDateString('mn-MN')}
+                                          </p>
+                                          <div className="flex gap-2">
+                                            <button
+                                              onClick={() => handleEditStatic(content)}
+                                              className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 transition-colors"
+                                            >
+                                              <Edit3 className="w-3.5 h-3.5" />
+                                              Засах
+                                            </button>
+                                            <button
+                                              onClick={() => handleDelete(content.id, 'static')}
+                                              className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                              title="Устгах"
+                                            >
+                                              <Trash2 className="w-4 h-4" />
+                                            </button>
+                                          </div>
+                                        </div>
                                       </div>
                                     ) : (
                                       <div className="text-center py-4">
-                                        <p className="text-gray-500 text-sm mb-3">Контент бүртгэгдээгүй</p>
+                                        <p className="text-gray-500 text-sm mb-3">Контент үүсгэгдээгүй байна</p>
                                         <button 
                                           onClick={async () => {
                                             try {
@@ -843,10 +895,10 @@ export default function AdminPage() {
                                               alert('Контент үүсгэхэд алдаа гарлаа');
                                             }
                                           }}
-                                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                                          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 transition-colors"
                                         >
                                           <Plus className="w-4 h-4" />
-                                          Нэмэх
+                                          Үүсгэх
                                         </button>
                                       </div>
                                     )}
@@ -1151,80 +1203,147 @@ export default function AdminPage() {
                             </div>
                           )}
 
-                          {/* Category Content */}
+                          {/* Category Content - Improved UI */}
                           {item.type === 'category' && (
-                            <div>
-                              {/* Search and Add Button */}
-                              <div className="flex items-center gap-4 mb-4">
-                                <div className="relative flex-1">
-                                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                  <input
-                                    type="text"
-                                    placeholder="Хайх..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                  />
+                            <div className="space-y-4">
+                              {/* Header with stats and page link */}
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-200">
+                                <div className="flex items-center gap-4">
+                                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${
+                                    contents.length > 0 ? 'from-green-500 to-green-600' : 'from-orange-500 to-orange-600'
+                                  } flex items-center justify-center text-white font-bold`}>
+                                    {contents.length}
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-gray-900">Нийт контент</p>
+                                    <p className="text-sm text-gray-500">
+                                      {contents.length > 0 
+                                        ? `Сүүлд: ${new Date(contents[0]?.created_date || '').toLocaleDateString('mn-MN')}` 
+                                        : 'Контент байхгүй'}
+                                    </p>
+                                  </div>
                                 </div>
-                                <CreateNewsForm
-                                  defaultCategoryId={GetIdByHref(item.categoryHref) || undefined}
-                                  buttonText={
-                                    <>
-                                      <Plus className="w-4 h-4" />
-                                      Шинэ мэдээ нэмэх
-                                    </>
-                                  }
-                                  buttonClassName="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
-                                  onSuccess={fetchData}
-                                />
-                              </div>
-
-                              {contents.length === 0 ? (
-                                <div className="text-center py-8 bg-white rounded-lg border">
-                                  <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                                  <p className="text-gray-500 mb-4">Контент байхгүй</p>
+                                <div className="flex items-center gap-2">
+                                  <a
+                                    href={item.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 px-4 py-2 text-sm text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
+                                  >
+                                    <ExternalLink className="w-4 h-4" />
+                                    Хуудас харах
+                                  </a>
                                   <CreateNewsForm
                                     defaultCategoryId={GetIdByHref(item.categoryHref) || undefined}
                                     buttonText={
                                       <>
                                         <Plus className="w-4 h-4" />
-                                        Шинэ контент нэмэх
+                                        Шинэ нэмэх
                                       </>
                                     }
-                                    buttonClassName="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                                    buttonClassName="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 transition-colors"
+                                    onSuccess={fetchData}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Search */}
+                              {contents.length > 0 && (
+                                <div className="relative">
+                                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                  <input
+                                    type="text"
+                                    placeholder="Контент хайх..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                  />
+                                </div>
+                              )}
+
+                              {/* Content List */}
+                              {contents.length === 0 ? (
+                                <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300">
+                                  <Newspaper className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                                  <p className="text-gray-600 font-medium mb-2">Контент бүртгэгдээгүй байна</p>
+                                  <p className="text-sm text-gray-400 mb-6">Энэ ангилалд мэдээ нэмэхийн тулд товч дарна уу</p>
+                                  <CreateNewsForm
+                                    defaultCategoryId={GetIdByHref(item.categoryHref) || undefined}
+                                    buttonText={
+                                      <>
+                                        <Plus className="w-4 h-4" />
+                                        Эхний контент нэмэх
+                                      </>
+                                    }
+                                    buttonClassName="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl text-sm hover:bg-indigo-700 transition-colors shadow-lg"
                                     onSuccess={fetchData}
                                   />
                                 </div>
                               ) : (
-                                <div className="space-y-2">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                   {contents
                                     .filter(c => c.title.toLowerCase().includes(searchTerm.toLowerCase()))
-                                    .map(content => (
-                                      <div key={content.id} className="bg-white rounded-lg border p-4 flex items-center justify-between hover:shadow-sm transition-shadow">
+                                    .slice(0, 10)
+                                    .map((content, idx) => (
+                                      <div 
+                                        key={content.id} 
+                                        className="bg-white rounded-xl border-2 border-gray-100 p-4 flex items-center gap-4 hover:shadow-md hover:border-indigo-200 transition-all group"
+                                      >
+                                        {/* Order number */}
+                                        <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-sm font-medium text-gray-500 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors">
+                                          {idx + 1}
+                                        </div>
+                                        
+                                        {/* Content info */}
                                         <div className="flex-1 min-w-0">
-                                          <h4 className="font-medium text-gray-900 truncate">{content.title}</h4>
+                                          <h4 className="font-medium text-gray-900 truncate group-hover:text-indigo-600 transition-colors">
+                                            {content.title}
+                                          </h4>
                                           <p className="text-sm text-gray-500">
-                                            {new Date(content.created_date).toLocaleDateString('mn-MN')}
+                                            {new Date(content.created_date).toLocaleDateString('mn-MN', {
+                                              year: 'numeric',
+                                              month: 'short',
+                                              day: 'numeric'
+                                            })}
                                           </p>
                                         </div>
-                                        <div className="flex items-center gap-2 ml-4">
+                                        
+                                        {/* Actions */}
+                                        <div className="flex items-center gap-1">
                                           <a
                                             href={`/news/${content.id}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
+                                            className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                            title="Харах"
                                           >
                                             <Eye className="w-4 h-4" />
                                           </a>
                                           <button
                                             onClick={() => handleDelete(content.id, 'content')}
-                                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+                                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                            title="Устгах"
                                           >
                                             <Trash2 className="w-4 h-4" />
                                           </button>
                                         </div>
                                       </div>
                                     ))}
+                                </div>
+                              )}
+                              
+                              {/* Show more link */}
+                              {contents.filter(c => c.title.toLowerCase().includes(searchTerm.toLowerCase())).length > 10 && (
+                                <div className="text-center pt-2">
+                                  <a
+                                    href={item.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+                                  >
+                                    Бүгдийг харах ({contents.length})
+                                    <ExternalLink className="w-4 h-4" />
+                                  </a>
                                 </div>
                               )}
                             </div>
@@ -1246,57 +1365,99 @@ export default function AdminPage() {
 
       </main>
 
-      {/* Edit Modal */}
+      {/* Edit Modal - RichTextEditor with improved UI */}
       {editingStatic && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden shadow-2xl">
-            <div className="p-6 border-b flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-semibold">Контент засах</h3>
-                <p className="text-sm text-gray-500">{staticTypeLabels[editingStatic.type]}</p>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[95vh] overflow-hidden shadow-2xl">
+            {/* Header with gradient */}
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold">Контент засах</h3>
+                  <p className="text-white/80 text-sm mt-1">{staticTypeLabels[editingStatic.type]}</p>
+                </div>
+                <button
+                  onClick={() => setEditingStatic(null)}
+                  className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <button
-                onClick={() => setEditingStatic(null)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
-              >
-                <X className="w-5 h-5" />
-              </button>
             </div>
-            <div className="p-6 space-y-4 overflow-y-auto max-h-[60vh]">
+            
+            <div className="p-6 space-y-5 overflow-y-auto max-h-[65vh]">
+              {/* Title Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Гарчиг</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Гарчиг
+                </label>
                 <input
                   type="text"
                   value={editForm.title}
                   onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-lg"
+                  placeholder="Контентын гарчиг оруулна уу"
                 />
               </div>
+              
+              {/* Rich Text Editor */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Агуулга (HTML)</label>
-                <textarea
-                  value={editForm.content}
-                  onChange={(e) => setEditForm(prev => ({ ...prev, content: e.target.value }))}
-                  rows={12}
-                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-                />
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Агуулга
+                </label>
+                <div className="border-2 border-gray-200 rounded-xl overflow-hidden">
+                  <RichTextEditor
+                    value={editForm.content}
+                    onChange={(value) => setEditForm(prev => ({ ...prev, content: value }))}
+                  />
+                </div>
+              </div>
+              
+              {/* Preview Section */}
+              <div className="mt-4">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Урьдчилан харах
+                </label>
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50 max-h-[200px] overflow-y-auto">
+                  {editForm.content ? (
+                    <div 
+                      className="prose max-w-none prose-sm"
+                      dangerouslySetInnerHTML={{ __html: editForm.content }}
+                    />
+                  ) : (
+                    <p className="text-gray-400 text-center py-4">Агуулга оруулаагүй байна</p>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="p-6 border-t bg-gray-50 flex justify-end gap-3">
-              <button
-                onClick={() => setEditingStatic(null)}
-                className="px-6 py-2.5 border rounded-lg hover:bg-gray-100 transition-colors"
+            
+            {/* Footer */}
+            <div className="p-6 border-t bg-gray-50 flex items-center justify-between">
+              <a
+                href={`/activities/transparency`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-gray-500 hover:text-indigo-600"
               >
-                Цуцлах
-              </button>
-              <button
-                onClick={handleSaveStatic}
-                disabled={isSaving}
-                className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-              >
-                <Save className="w-4 h-4" />
-                {isSaving ? 'Хадгалж байна...' : 'Хадгалах'}
-              </button>
+                <ExternalLink className="w-4 h-4" />
+                Хуудас харах
+              </a>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setEditingStatic(null)}
+                  className="px-6 py-2.5 border-2 border-gray-200 rounded-xl hover:bg-gray-100 transition-colors font-medium"
+                >
+                  Цуцлах
+                </button>
+                <button
+                  onClick={handleSaveStatic}
+                  disabled={isSaving}
+                  className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-colors disabled:opacity-50 font-medium shadow-lg"
+                >
+                  <Save className="w-4 h-4" />
+                  {isSaving ? 'Хадгалж байна...' : 'Хадгалах'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

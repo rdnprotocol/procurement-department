@@ -9,6 +9,7 @@ import {
   Globe, Shield, Zap, Heart
 } from "lucide-react";
 import Link from "next/link";
+import { enhanceHtmlForInlinePdfEmbeds } from "@/utils/enhanceHtml";
 
 // Icon mapping
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -138,7 +139,7 @@ export default function IntroPage() {
             <CardContent className="pt-8 pb-8">
               <div 
                 className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:text-gray-900 prose-ul:text-gray-700 prose-li:text-gray-700 prose-img:rounded-xl prose-img:shadow-lg"
-                dangerouslySetInnerHTML={{ __html: introContent.content }}
+                dangerouslySetInnerHTML={{ __html: enhanceHtmlForInlinePdfEmbeds(introContent.content) }}
               />
             </CardContent>
           </Card>

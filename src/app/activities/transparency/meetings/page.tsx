@@ -3,14 +3,13 @@ import { Container } from "@/components/assets";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Calendar, 
-  FileText, 
   ArrowRight,
   Clock,
   MapPin,
-  Users,
   Phone
 } from "lucide-react";
 import Link from "next/link";
+import { enhanceHtmlForInlinePdfEmbeds } from "@/utils/enhanceHtml";
 
 export const metadata = {
   title: "Иргэд хүлээн авах уулзалт | Худалдан авах ажиллагааны газар",
@@ -143,7 +142,7 @@ export default async function MeetingsPage() {
                   {hasData ? (
                     <div 
                       className="prose max-w-none prose-headings:text-gray-900 prose-p:text-gray-700"
-                      dangerouslySetInnerHTML={{ __html: content!.content }}
+                      dangerouslySetInnerHTML={{ __html: enhanceHtmlForInlinePdfEmbeds(content!.content) }}
                     />
                   ) : (
                     <div className="text-center py-8">

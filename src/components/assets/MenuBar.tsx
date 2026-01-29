@@ -61,27 +61,27 @@ const menuData = {
       href: "/activities/transparency",
       children: [
         {
-          title: "Бодлогын баримт бичиг, хууль тогтоомж",
-          href: "/category/strateg-tolovlogoo-tailan",
+          title: "Бодлогын баримт бичиг",
+          href: "/activities/transparency/policy",
         },
         {
           title: "Стратеги төлөвлөгөө",
-          href: "/category/strateg-tolovlogoo",
+          href: "/activities/transparency/strategy",
         },
         {
           title: "Төлөвлөгөө, тайлан",
-          href: "/category/tolovlogoo-tailan",
+          href: "/activities/transparency/plan",
         },
         {
-          title: "Худалдан авалтын статистик мэдээ",
-          href: "/category/statistic",
+          title: "Статистик мэдээ",
+          href: "/activities/transparency/statistics",
         },
         {
-          title: "Өргөдөл, гомдлын шийдвэрлэлт тайлан",
+          title: "Өргөдөл, гомдлын шийдвэрлэлт",
           href: "/activities/transparency/complaints",
         },
         {
-          title: "Иргэд хүлээн авах уулзалтын хуваарь",
+          title: "Иргэд хүлээн авах уулзалт",
           href: "/activities/transparency/meetings",
         },
       ],
@@ -91,16 +91,20 @@ const menuData = {
       href: "/activities/transparency/hr",
       children: [
         {
+          title: "Танилцуулга",
+          href: "/activities/transparency/hr#intro",
+        },
+        {
           title: "Төлөвлөгөө",
-          href: "/activities/transparency/hr",
+          href: "/activities/transparency/hr#plan",
         },
         {
           title: "Тайлан",
-          href: "/activities/transparency/hr",
+          href: "/activities/transparency/hr#report",
         },
         {
           title: "Статистик мэдээ",
-          href: "/activities/transparency/hr",
+          href: "/activities/transparency/hr#stats",
         },
       ],
     },
@@ -119,16 +123,20 @@ const menuData = {
       href: "/activities/monitoring",
       children: [
         {
-          title: "Дотоод хяналт-шинжилгээ үнэлгээ",
-          href: "/activities/monitoring",
+          title: "Танилцуулга",
+          href: "/activities/monitoring#intro",
         },
         {
-          title: "Төрийн байгууллагын хяналт, дүгнэлт",
-          href: "/activities/monitoring",
+          title: "Дотоод хяналт",
+          href: "/activities/monitoring#internal",
         },
         {
-          title: "Захиалагчдад хийгдсэн хяналт, шалгалт, тайлан",
-          href: "/activities/monitoring",
+          title: "Төрийн хяналт",
+          href: "/activities/monitoring#government",
+        },
+        {
+          title: "Захиалагчийн хяналт",
+          href: "/activities/monitoring#client",
         },
       ],
     },
@@ -137,20 +145,16 @@ const menuData = {
       href: "/activities/ethics",
       children: [
         {
-          title: "Хууль, Журам",
-          href: "https://ec.gov.mn/law",
-        },
-        {
-          title: "Ажиллах Журам",
-          href: "https://ec.gov.mn/shiidver",
+          title: "Танилцуулга",
+          href: "/activities/ethics#intro",
         },
         {
           title: "Үйл ажиллагаа",
-          href: "/activities/ethics",
+          href: "/activities/ethics#activity",
         },
         {
           title: "Бүрэлдэхүүн",
-          href: "/activities/ethics",
+          href: "/activities/ethics#members",
         },
       ],
     },

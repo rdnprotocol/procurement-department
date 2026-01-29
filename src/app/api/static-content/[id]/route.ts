@@ -60,3 +60,29 @@ export async function PUT(
     );
   }
 }
+
+// DELETE request - контент устгах
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const supabase = createSupabaseServerClient();
+
+    const { error } = await supabase
+      .from('static_contents')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting static content:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete content' },
+      { status: 500 }
+    );
+  }
+}

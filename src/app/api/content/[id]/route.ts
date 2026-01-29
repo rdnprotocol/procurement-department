@@ -75,3 +75,53 @@ export async function GET(
     );
   }
 }
+
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const contentId = parseInt(id, 10);
+
+  if (isNaN(contentId)) {
+    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+  }
+
+  try {
+    const supabase = createSupabaseServerClient();
+
+    // Delete child items first (if no FK cascade configured)
+    const { error: itemsError } = await supabase
+      .from('content_item')
+      .delete()
+      .eq('content_id', contentId);
+
+    if (itemsError) {
+      return NextResponse.json(
+        { error: "Failed to delete content items", details: itemsError.message },
+        { status: 500 }
+      );
+    }
+
+    const { error: contentError } = await supabase
+      .from('content')
+      .delete()
+      .eq('id', contentId);
+
+    if (contentError) {
+      return NextResponse.json(
+        { error: "Failed to delete content", details: contentError.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting content:", error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    return NextResponse.json(
+      { error: "Failed to delete content", details: errorMessage },
+      { status: 500 }
+    );
+  }
+}

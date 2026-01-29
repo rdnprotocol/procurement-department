@@ -2,18 +2,17 @@ import { createSupabaseServerClient } from "@/lib/supabaseClient";
 import { Container } from "@/components/assets";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  Users, 
   FileText, 
-  ClipboardList, 
-  BarChart3,
+  BookOpen, 
+  ScrollText,
   ArrowRight
 } from "lucide-react";
 import Link from "next/link";
 import { enhanceHtmlForInlinePdfEmbeds } from "@/utils/enhanceHtml";
 
 export const metadata = {
-  title: "Хүний нөөц | Худалдан авах ажиллагааны газар",
-  description: "Хүний нөөцийн ил тод байдлын мэдээлэл",
+  title: "Бодлогын баримт бичиг | Худалдан авах ажиллагааны газар",
+  description: "Бодлогын баримт бичиг, хууль тогтоомжийн мэдээлэл",
 };
 
 export const revalidate = 60;
@@ -25,53 +24,40 @@ interface StaticContent {
   type: string;
 }
 
-const hrSections = [
+const policySections = [
   {
-    type: "hr-intro",
-    sectionId: "intro",
+    type: "policy-intro",
     title: "Танилцуулга",
-    icon: Users,
+    icon: FileText,
     color: "from-blue-500 to-blue-600",
     bgColor: "bg-blue-100",
     iconColor: "text-blue-600",
   },
   {
-    type: "hr-plan",
-    sectionId: "plan",
-    title: "Төлөвлөгөө",
-    icon: ClipboardList,
-    color: "from-green-500 to-green-600",
-    bgColor: "bg-green-100",
-    iconColor: "text-green-600",
+    type: "policy-documents",
+    title: "Бодлогын баримт бичгүүд",
+    icon: BookOpen,
+    color: "from-indigo-500 to-indigo-600",
+    bgColor: "bg-indigo-100",
+    iconColor: "text-indigo-600",
   },
   {
-    type: "hr-report",
-    sectionId: "report",
-    title: "Тайлан",
-    icon: FileText,
+    type: "policy-rules",
+    title: "Дотоод журам",
+    icon: ScrollText,
     color: "from-purple-500 to-purple-600",
     bgColor: "bg-purple-100",
     iconColor: "text-purple-600",
   },
-  {
-    type: "hr-stats",
-    sectionId: "stats",
-    title: "Статистик мэдээ",
-    icon: BarChart3,
-    color: "from-orange-500 to-orange-600",
-    bgColor: "bg-orange-100",
-    iconColor: "text-orange-600",
-  },
 ];
 
-export default async function HRPage() {
+export default async function PolicyPage() {
   const supabase = createSupabaseServerClient();
 
-  // Fetch static contents for HR
   const { data: staticContents } = await supabase
     .from('static_contents')
     .select('*')
-    .in('type', hrSections.map(s => s.type))
+    .in('type', policySections.map(s => s.type))
     .order('type');
 
   const getContentByType = (type: string): StaticContent | undefined => {
@@ -92,32 +78,32 @@ export default async function HRPage() {
           <span>/</span>
           <Link href="/activities/transparency" className="hover:text-blue-600 transition-colors">Ил тод байдал</Link>
           <span>/</span>
-          <span className="text-gray-900 font-medium">Хүний нөөц</span>
+          <span className="text-gray-900 font-medium">Бодлогын баримт бичиг</span>
         </nav>
 
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-6 shadow-lg">
-            <Users className="w-10 h-10 text-white" />
+            <FileText className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Хүний нөөц
+            Бодлогын баримт бичиг
           </h1>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Байгууллагын хүний нөөцийн ил тод байдлыг хангах хүрээнд 
-            нийтэлж буй мэдээ, мэдээлэл, тайлан
+            Байгууллагын бодлого, хууль тогтоомж, дүрэм журмын ил тод байдлыг 
+            хангах хүрээнд нийтэлж буй мэдээлэл
           </p>
         </div>
 
         {/* Content Sections */}
         <div className="space-y-8">
-          {hrSections.map((section) => {
+          {policySections.map((section) => {
             const Icon = section.icon;
             const content = getContentByType(section.type);
             const hasData = hasContent(section.type);
 
             return (
-              <Card key={section.type} id={section.sectionId} className="border-0 shadow-lg overflow-hidden scroll-mt-24">
+              <Card key={section.type} className="border-0 shadow-lg overflow-hidden">
                 <CardHeader className={`bg-gradient-to-r ${section.color} text-white p-5`}>
                   <CardTitle className="text-lg font-semibold flex items-center gap-3">
                     <Icon className="w-6 h-6" />
@@ -151,12 +137,12 @@ export default async function HRPage() {
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-blue-100 rounded-xl">
-                  <Users className="w-8 h-8 text-blue-600" />
+                  <FileText className="w-8 h-8 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 text-lg">Хүний нөөцийн мэдээлэл</h3>
+                  <h3 className="font-semibold text-gray-900 text-lg">Бодлогын баримт бичиг</h3>
                   <p className="text-sm text-gray-600">
-                    Байгууллагын хүний нөөцийн ил тод байдал
+                    Байгууллагын хууль эрх зүйн орчин
                   </p>
                 </div>
               </div>

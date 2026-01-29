@@ -9,6 +9,7 @@ import {
   Clock
 } from "lucide-react";
 import Link from "next/link";
+import { enhanceHtmlForInlinePdfEmbeds } from "@/utils/enhanceHtml";
 
 export const metadata = {
   title: "Өргөдөл, гомдлын шийдвэрлэлт | Худалдан авах ажиллагааны газар",
@@ -138,7 +139,7 @@ export default async function ComplaintsPage() {
                   {hasData ? (
                     <div 
                       className="prose max-w-none prose-headings:text-gray-900 prose-p:text-gray-700"
-                      dangerouslySetInnerHTML={{ __html: content!.content }}
+                      dangerouslySetInnerHTML={{ __html: enhanceHtmlForInlinePdfEmbeds(content!.content) }}
                     />
                   ) : (
                     <div className="text-center py-8">
