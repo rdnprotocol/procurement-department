@@ -1,12 +1,1 @@
-export { StatisticsCards } from './StatisticsCards';
-export { MenuTabs } from './MenuTabs';
-export { MenuItemAccordion } from './MenuItemAccordion';
 export { LawDocumentsSection } from './LawDocumentsSection';
-export { AboutSection } from './AboutSection';
-export { TransparencySection } from './TransparencySection';
-export { TenderSection } from './TenderSection';
-export { AnticorruptionSection } from './AnticorruptionSection';
-export { ContactSection } from './ContactSection';
-export { StaticTabContent } from './StaticTabContent';
-export { ContentTabContent } from './ContentTabContent';
-export { HelpSection } from './HelpSection';

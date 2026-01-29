@@ -10,13 +10,13 @@ export async function GET(
     const supabase = createSupabaseServerClient();
     
     const { data, error } = await supabase
-      .from('history_events')
+      .from('law_documents')
       .select('*')
       .eq('id', id)
       .single();
 
     if (error) {
-      console.error('Error fetching history event:', error);
+      console.error('Error fetching law document:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -36,23 +36,27 @@ export async function PUT(
     const supabase = createSupabaseServerClient();
     const body = await request.json();
     
+    // Validate required fields
+    if (!body.title) {
+      return NextResponse.json({ error: 'Гарчиг оруулна уу' }, { status: 400 });
+    }
+
     const { data, error } = await supabase
-      .from('history_events')
+      .from('law_documents')
       .update({
-        year: body.year,
         title: body.title,
-        description: body.description,
-        icon: body.icon,
-        color: body.color,
-        sort_order: body.sort_order,
-        is_active: body.is_active
+        type: body.type,
+        url: body.url || null,
+        file_url: body.file_url || null,
+        description: body.description || null,
+        updated_at: new Date().toISOString()
       })
       .eq('id', id)
       .select()
       .single();
 
     if (error) {
-      console.error('Error updating history event:', error);
+      console.error('Error updating law document:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -72,12 +76,12 @@ export async function DELETE(
     const supabase = createSupabaseServerClient();
     
     const { error } = await supabase
-      .from('history_events')
+      .from('law_documents')
       .delete()
       .eq('id', id);
 
     if (error) {
-      console.error('Error deleting history event:', error);
+      console.error('Error deleting law document:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -87,10 +91,6 @@ export async function DELETE(
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-
-
-
-
 
 
 

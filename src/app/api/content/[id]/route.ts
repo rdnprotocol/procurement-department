@@ -27,6 +27,8 @@ export async function GET(
       .select(`
         id,
         title,
+        description,
+        content,
         banner_image,
         created_date,
         category_id,
@@ -55,6 +57,8 @@ export async function GET(
     const content = {
       id: data.id,
       title: data.title,
+      description: data.description,
+      content: data.content,
       banner_image: data.banner_image,
       created_date: data.created_date,
       category_id: data.category_id,

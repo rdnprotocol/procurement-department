@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabaseClient';
+import { ALL_CONTENT_TYPE_VALUES } from '@/utils/contentTypes';
 
 export async function GET() {
   try {
@@ -33,9 +34,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate type
-    const validTypes = ['mission', 'vision', 'goal', 'history', 'structure', 'intro'];
-    if (!validTypes.includes(type)) {
+    // Validate type using centralized types
+    if (!ALL_CONTENT_TYPE_VALUES.includes(type)) {
       return NextResponse.json(
         { error: 'Хүчингүй төрөл' },
         { status: 400 }
