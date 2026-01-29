@@ -22,9 +22,13 @@ import {
   Building2,
   Save,
   X,
-  Clock
+  Clock,
+  Users,
+  ClipboardCheck
 } from 'lucide-react';
-import { Category } from "@/utils/category";
+import { LawDocumentsSection } from './components/LawDocumentsSection';
+import { Category, GetIdByHref } from "@/utils/category";
+import CreateNewsForm from '@/components/CreateNewsForm';
 import { useRouter } from 'next/navigation';
 
 interface StaticContent {
@@ -47,7 +51,7 @@ interface ContentData {
 interface MenuItem {
   title: string;
   href: string;
-  type: 'static' | 'category' | 'departments' | 'org_sections' | 'history_events';
+  type: 'static' | 'category' | 'departments' | 'org_sections' | 'history_events' | 'law_documents';
   staticTypes?: string[];
   categoryHref?: string;
 }
@@ -90,7 +94,7 @@ interface MenuSection {
   items: MenuItem[];
 }
 
-// Menu бүтэц - MenuBar-тай адилхан
+// Menu бүтэц - Вэбсайтын бүтцийн дагуу
 const menuStructure: Record<string, MenuSection> = {
   about: {
     title: 'Бидний тухай',
@@ -98,7 +102,7 @@ const menuStructure: Record<string, MenuSection> = {
     color: 'blue',
     items: [
       { title: 'Эрхэм зорилго', href: '/about/mission', type: 'static', staticTypes: ['mission', 'vision', 'goal'] },
-      { title: 'Бүтэц, зохион байгуулалт (Хэлтсүүд)', href: '/about/structure', type: 'departments' },
+      { title: 'Бүтэц, зохион байгуулалт', href: '/about/structure', type: 'departments' },
       { title: 'Байгууллагын танилцуулга', href: '/about/intro', type: 'org_sections' },
       { title: 'Түүхэн замнал', href: '/about/history', type: 'history_events' },
     ]
@@ -108,8 +112,7 @@ const menuStructure: Record<string, MenuSection> = {
     icon: Scale,
     color: 'green',
     items: [
-      { title: 'Худалдан авах ажиллагааны хууль', href: '/law/procurement', type: 'category', categoryHref: 'huuli-togtoomj' },
-      { title: 'Байгууллагын хууль тогтоомж', href: '/law/organization', type: 'category', categoryHref: 'baiguullagiin-huuli-togtoomj' },
+      { title: 'Хууль тогтоомжийн бүртгэл', href: '/law', type: 'law_documents' },
     ]
   },
   news: {
@@ -121,15 +124,53 @@ const menuStructure: Record<string, MenuSection> = {
       { title: 'Видео мэдээ', href: '/category/video-medee', type: 'category', categoryHref: 'video-medee' },
     ]
   },
-  activities: {
-    title: 'Ил тод байдал',
+  // Үйл ажиллагааны ил тод байдал - category based
+  transparency: {
+    title: 'Үйл ажиллагааны ил тод байдал',
     icon: Eye,
     color: 'indigo',
     items: [
-      { title: 'Бодлогын баримт бичиг', href: '/category/strateg-tolovlogoo-tailan', type: 'category', categoryHref: 'strateg-tolovlogoo-tailan' },
+      { title: 'Бодлогын баримт бичиг, хууль тогтоомж', href: '/category/strateg-tolovlogoo-tailan', type: 'category', categoryHref: 'strateg-tolovlogoo-tailan' },
       { title: 'Стратеги төлөвлөгөө', href: '/category/strateg-tolovlogoo', type: 'category', categoryHref: 'strateg-tolovlogoo' },
       { title: 'Төлөвлөгөө, тайлан', href: '/category/tolovlogoo-tailan', type: 'category', categoryHref: 'tolovlogoo-tailan' },
       { title: 'Статистик мэдээ', href: '/category/statistic', type: 'category', categoryHref: 'statistic' },
+      { title: 'Өргөдөл, гомдлын шийдвэрлэлт', href: '/activities/transparency/complaints', type: 'static', staticTypes: ['complaints-intro', 'complaints-report'] },
+      { title: 'Иргэд хүлээн авах уулзалт', href: '/activities/transparency/meetings', type: 'static', staticTypes: ['meetings-intro', 'meetings-schedule'] },
+    ]
+  },
+  // Хүний нөөц
+  hr: {
+    title: 'Хүний нөөц',
+    icon: Users,
+    color: 'blue',
+    items: [
+      { title: 'Хүний нөөц танилцуулга', href: '/activities/transparency/hr', type: 'static', staticTypes: ['hr-intro'] },
+      { title: 'Төлөвлөгөө', href: '/activities/transparency/hr', type: 'static', staticTypes: ['hr-plan'] },
+      { title: 'Тайлан', href: '/activities/transparency/hr', type: 'static', staticTypes: ['hr-report'] },
+      { title: 'Статистик мэдээ', href: '/activities/transparency/hr', type: 'static', staticTypes: ['hr-stats'] },
+    ]
+  },
+  // Хяналт шалгалт
+  monitoring: {
+    title: 'Хяналт шалгалт',
+    icon: ClipboardCheck,
+    color: 'emerald',
+    items: [
+      { title: 'Хяналт шалгалт танилцуулга', href: '/activities/monitoring', type: 'static', staticTypes: ['monitoring-intro'] },
+      { title: 'Дотоод хяналт-шинжилгээ үнэлгээ', href: '/activities/monitoring', type: 'static', staticTypes: ['monitoring-internal'] },
+      { title: 'Төрийн байгууллагын хяналт, дүгнэлт', href: '/activities/monitoring', type: 'static', staticTypes: ['monitoring-government'] },
+      { title: 'Захиалагчдад хийгдсэн хяналт', href: '/activities/monitoring', type: 'static', staticTypes: ['monitoring-client'] },
+    ]
+  },
+  // Ёс зүйн дэд хороо
+  ethics: {
+    title: 'Ёс зүйн дэд хороо',
+    icon: Scale,
+    color: 'violet',
+    items: [
+      { title: 'Ёс зүй танилцуулга', href: '/activities/ethics', type: 'static', staticTypes: ['ethics-intro'] },
+      { title: 'Үйл ажиллагаа', href: '/activities/ethics', type: 'static', staticTypes: ['ethics-activity'] },
+      { title: 'Бүрэлдэхүүн', href: '/activities/ethics', type: 'static', staticTypes: ['ethics-members'] },
     ]
   },
   tender: {
@@ -137,7 +178,6 @@ const menuStructure: Record<string, MenuSection> = {
     icon: ClipboardList,
     color: 'orange',
     items: [
-      { title: 'Тендерийн урилга', href: '/category/tender-urilga', type: 'category', categoryHref: 'tender-urilga' },
       { title: 'A3 гэрчилгээтэй хүний нөөц', href: '/category/a3-gerchilgee', type: 'category', categoryHref: 'a3-gerchilgee' },
       { title: 'Захиалагчдад зөвлөмж', href: '/category/zovlomj', type: 'category', categoryHref: 'zovlomj' },
     ]
@@ -161,6 +201,26 @@ const staticTypeLabels: Record<string, string> = {
   structure: 'Бүтэц, зохион байгуулалт',
   intro: 'Байгууллагын танилцуулга',
   history: 'Түүхэн замнал',
+  // Хүний нөөц
+  'hr-intro': 'Хүний нөөц танилцуулга',
+  'hr-plan': 'Хүний нөөц төлөвлөгөө',
+  'hr-report': 'Хүний нөөц тайлан',
+  'hr-stats': 'Хүний нөөц статистик',
+  // Хяналт шалгалт
+  'monitoring-intro': 'Хяналт шалгалт танилцуулга',
+  'monitoring-internal': 'Дотоод хяналт',
+  'monitoring-government': 'Төрийн хяналт',
+  'monitoring-client': 'Захиалагчийн хяналт',
+  // Ёс зүйн дэд хороо
+  'ethics-intro': 'Ёс зүй танилцуулга',
+  'ethics-activity': 'Ёс зүй үйл ажиллагаа',
+  'ethics-members': 'Ёс зүй бүрэлдэхүүн',
+  // Өргөдөл гомдол
+  'complaints-intro': 'Өргөдөл гомдол танилцуулга',
+  'complaints-report': 'Өргөдөл гомдол тайлан',
+  // Иргэд хүлээн авах
+  'meetings-intro': 'Уулзалт танилцуулга',
+  'meetings-schedule': 'Уулзалтын хуваарь',
 };
 
 // Хэлтсийн interface - API-аас ирэх формат
@@ -483,6 +543,8 @@ export default function AdminPage() {
     indigo: { bg: 'bg-indigo-600', text: 'text-indigo-600', light: 'bg-indigo-50' },
     orange: { bg: 'bg-orange-600', text: 'text-orange-600', light: 'bg-orange-50' },
     red: { bg: 'bg-red-600', text: 'text-red-600', light: 'bg-red-50' },
+    emerald: { bg: 'bg-emerald-600', text: 'text-emerald-600', light: 'bg-emerald-50' },
+    violet: { bg: 'bg-violet-600', text: 'text-violet-600', light: 'bg-violet-50' },
   };
 
   if (isLoading) {
@@ -758,7 +820,31 @@ export default function AdminPage() {
                                     ) : (
                                       <div className="text-center py-4">
                                         <p className="text-gray-500 text-sm mb-3">Контент бүртгэгдээгүй</p>
-                                        <button className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
+                                        <button 
+                                          onClick={async () => {
+                                            try {
+                                              const res = await fetch('/api/static-content', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({
+                                                  title: staticTypeLabels[type] || type,
+                                                  content: '',
+                                                  type: type
+                                                })
+                                              });
+                                              if (res.ok) {
+                                                await fetchData();
+                                              } else {
+                                                const error = await res.json();
+                                                alert(error.error || 'Алдаа гарлаа');
+                                              }
+                                            } catch (error) {
+                                              console.error('Error creating static content:', error);
+                                              alert('Контент үүсгэхэд алдаа гарлаа');
+                                            }
+                                          }}
+                                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                                        >
                                           <Plus className="w-4 h-4" />
                                           Нэмэх
                                         </button>
@@ -1068,15 +1154,28 @@ export default function AdminPage() {
                           {/* Category Content */}
                           {item.type === 'category' && (
                             <div>
-                              {/* Search */}
-                              <div className="relative mb-4">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                <input
-                                  type="text"
-                                  placeholder="Хайх..."
-                                  value={searchTerm}
-                                  onChange={(e) => setSearchTerm(e.target.value)}
-                                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              {/* Search and Add Button */}
+                              <div className="flex items-center gap-4 mb-4">
+                                <div className="relative flex-1">
+                                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                  <input
+                                    type="text"
+                                    placeholder="Хайх..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  />
+                                </div>
+                                <CreateNewsForm
+                                  defaultCategoryId={GetIdByHref(item.categoryHref) || undefined}
+                                  buttonText={
+                                    <>
+                                      <Plus className="w-4 h-4" />
+                                      Шинэ мэдээ нэмэх
+                                    </>
+                                  }
+                                  buttonClassName="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                                  onSuccess={fetchData}
                                 />
                               </div>
 
@@ -1084,10 +1183,17 @@ export default function AdminPage() {
                                 <div className="text-center py-8 bg-white rounded-lg border">
                                   <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                                   <p className="text-gray-500 mb-4">Контент байхгүй</p>
-                                  <button className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
-                                    <Plus className="w-4 h-4" />
-                                    Шинэ контент нэмэх
-                                  </button>
+                                  <CreateNewsForm
+                                    defaultCategoryId={GetIdByHref(item.categoryHref) || undefined}
+                                    buttonText={
+                                      <>
+                                        <Plus className="w-4 h-4" />
+                                        Шинэ контент нэмэх
+                                      </>
+                                    }
+                                    buttonClassName="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                                    onSuccess={fetchData}
+                                  />
                                 </div>
                               ) : (
                                 <div className="space-y-2">
@@ -1122,6 +1228,11 @@ export default function AdminPage() {
                                 </div>
                               )}
                             </div>
+                          )}
+
+                          {/* Law Documents Content */}
+                          {item.type === 'law_documents' && (
+                            <LawDocumentsSection />
                           )}
                         </div>
                       )}

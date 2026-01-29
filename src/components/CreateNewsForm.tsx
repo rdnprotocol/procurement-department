@@ -12,9 +12,10 @@ interface CreateNewsFormProps {
   defaultCategoryId?: number;
   buttonText?: ReactNode;
   buttonClassName?: string;
+  onSuccess?: () => void;
 }
 
-export default function CreateNewsForm({ defaultCategoryId, buttonText, buttonClassName }: CreateNewsFormProps) {
+export default function CreateNewsForm({ defaultCategoryId, buttonText, buttonClassName, onSuccess }: CreateNewsFormProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -28,27 +29,61 @@ export default function CreateNewsForm({ defaultCategoryId, buttonText, buttonCl
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate category is selected
+    if (!formData.category_id) {
+      alert('Ангилал сонгоно уу');
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
-      // Form data үүсгэх
-      const form = new FormData();
-      form.append('title', formData.title);
-      form.append('description', formData.description);
-      form.append('content', formData.content);
-      form.append('category_id', formData.category_id);
+      let bannerImageUrl: string | null = null;
+
+      // Зураг upload хийх
       if (formData.file) {
-        form.append('file', formData.file);
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', formData.file);
+
+        const uploadRes = await fetch('/api/upload', {
+          method: 'POST',
+          body: uploadFormData
+        });
+
+        if (uploadRes.ok) {
+          const uploadData = await uploadRes.json();
+          if (uploadData.success) {
+            bannerImageUrl = uploadData.url;
+          }
+        }
       }
 
-      // API руу хүсэлт илгээх
+      // Контент хадгалах
+      const contentData = {
+        title: formData.title,
+        description: formData.description,
+        content: formData.content,
+        category_id: parseInt(formData.category_id, 10),
+        banner_image: bannerImageUrl,
+        created_date: new Date().toISOString()
+      };
+
+      console.log('Sending content data:', contentData);
+
       const response = await fetch('/api/content', {
         method: 'POST',
-        body: form
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(contentData)
       });
+      
+      console.log('Response status:', response.status);
 
       if (!response.ok) {
-        throw new Error('Мэдээ оруулахад алдаа гарлаа');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Мэдээ оруулахад алдаа гарлаа');
       }
 
       // Form цэвэрлэх
@@ -57,11 +92,16 @@ export default function CreateNewsForm({ defaultCategoryId, buttonText, buttonCl
         description: '',
         content: '',
         file: null,
-        category_id: ''
+        category_id: defaultCategoryId ? defaultCategoryId.toString() : ''
       });
 
       // Refresh хийх
       router.refresh();
+      
+      // Call onSuccess callback if provided
+      if (onSuccess) {
+        onSuccess();
+      }
       
       alert('Мэдээ амжилттай нэмэгдлээ');
       setOpen(false);

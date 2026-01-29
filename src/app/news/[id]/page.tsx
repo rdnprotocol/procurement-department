@@ -22,6 +22,8 @@ interface ContentItem {
 interface ContentData {
   id: number;           // Контентын дугаар
   title: string;        // Гарчиг
+  description?: string; // Товч тайлбар
+  content?: string;     // Дэлгэрэнгүй агуулга
   banner_image: string; // Толгой зураг
   created_date: string; // Үүсгэсэн огноо
   category_id: number;  // Ангиллын дугаар
@@ -141,6 +143,21 @@ export default function NewsDetailsPage() {
               </div>
             </div>
             <Separator />
+
+            {/* Товч тайлбар */}
+            {content.description && (
+              <p className="text-lg text-gray-700 leading-relaxed">
+                {content.description}
+              </p>
+            )}
+
+            {/* Дэлгэрэнгүй агуулга */}
+            {content.content && (
+              <div 
+                className="prose prose-lg max-w-none text-gray-800"
+                dangerouslySetInnerHTML={{ __html: content.content }}
+              />
+            )}
 
             {/* Үндсэн агуулга - текст, зураг, PDF файлууд */}
             <section className="space-y-8">

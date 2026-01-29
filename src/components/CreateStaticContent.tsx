@@ -1,25 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RichTextEditor } from './RichTextEditor';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select";
 import { Plus } from 'lucide-react';
+import { getContentTypesByGroup, ContentType } from '@/utils/contentTypes';
 
 interface CreateStaticContentProps {
   onSuccess: () => void;
   defaultType?: string;
+  buttonText?: ReactNode;
+  buttonClassName?: string;
+  availableTypes?: ContentType[];
 }
 
-export function CreateStaticContent({ onSuccess, defaultType }: CreateStaticContentProps) {
+export function CreateStaticContent({ onSuccess, defaultType, buttonText, buttonClassName, availableTypes }: CreateStaticContentProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [type, setType] = useState<string>(defaultType || '');
   const [isSaving, setIsSaving] = useState(false);
+
+  const contentTypesByGroup = getContentTypesByGroup();
 
   const handleSubmit = async () => {
     if (!title || !type) {
@@ -49,7 +55,7 @@ export function CreateStaticContent({ onSuccess, defaultType }: CreateStaticCont
       setOpen(false);
       setTitle('');
       setContent('');
-      setType('');
+      setType(defaultType || '');
       onSuccess();
     } catch (error) {
       console.error('Error creating static content:', error);
@@ -59,13 +65,41 @@ export function CreateStaticContent({ onSuccess, defaultType }: CreateStaticCont
     }
   };
 
+  // Use available types if provided, otherwise use all types by group
+  const renderSelectContent = () => {
+    if (availableTypes && availableTypes.length > 0) {
+      return availableTypes.map((t) => (
+        <SelectItem key={t.value} value={t.value}>
+          {t.label}
+        </SelectItem>
+      ));
+    }
+
+    return Object.entries(contentTypesByGroup).map(([group, types]) => (
+      <SelectGroup key={group}>
+        <SelectLabel className="text-xs font-semibold text-gray-500 uppercase">{group}</SelectLabel>
+        {types.map((t) => (
+          <SelectItem key={t.value} value={t.value}>
+            {t.label}
+          </SelectItem>
+        ))}
+      </SelectGroup>
+    ));
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Plus className="w-4 h-4 mr-2" />
-          Шинэ контент нэмэх
-        </Button>
+        {buttonText ? (
+          <button className={buttonClassName}>
+            {buttonText}
+          </button>
+        ) : (
+          <Button>
+            <Plus className="w-4 h-4 mr-2" />
+            Шинэ контент нэмэх
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -79,13 +113,8 @@ export function CreateStaticContent({ onSuccess, defaultType }: CreateStaticCont
               <SelectTrigger id="type">
                 <SelectValue placeholder="Төрөл сонгоно уу" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="mission">Эрхэм зорилго</SelectItem>
-                <SelectItem value="vision">Алсын харалт</SelectItem>
-                <SelectItem value="goal">Стратегийн зорилтууд</SelectItem>
-                <SelectItem value="history">Түүхэн замнал</SelectItem>
-                <SelectItem value="structure">Бүтэц, зохион байгуулалт</SelectItem>
-                <SelectItem value="intro">Байгууллагын танилцуулга</SelectItem>
+              <SelectContent className="max-h-80">
+                {renderSelectContent()}
               </SelectContent>
             </Select>
           </div>

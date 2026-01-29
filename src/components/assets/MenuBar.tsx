@@ -78,11 +78,11 @@ const menuData = {
         },
         {
           title: "Өргөдөл, гомдлын шийдвэрлэлт тайлан",
-          href: "/activities/transparency/finance",
+          href: "/activities/transparency/complaints",
         },
         {
           title: "Иргэд хүлээн авах уулзалтын хуваарь",
-          href: "/activities/transparency/finance",
+          href: "/activities/transparency/meetings",
         },
       ],
     },
@@ -120,21 +120,21 @@ const menuData = {
       children: [
         {
           title: "Дотоод хяналт-шинжилгээ үнэлгээ",
-          href: "/activities/monitoring/ethics",
+          href: "/activities/monitoring",
         },
         {
           title: "Төрийн байгууллагын хяналт, дүгнэлт",
-          href: "/activities/monitoring/ethics",
+          href: "/activities/monitoring",
         },
         {
-          title: "Захиалагчдад хийгдсэн хяналт, шалгалт, тайлан ",
-          href: "/activities/monitoring/ethics",
+          title: "Захиалагчдад хийгдсэн хяналт, шалгалт, тайлан",
+          href: "/activities/monitoring",
         },
       ],
     },
     {
       title: "Ёс зүйн дэд хороо",
-      href: "/activities/monitoring/ethics",
+      href: "/activities/ethics",
       children: [
         {
           title: "Хууль, Журам",
@@ -146,11 +146,11 @@ const menuData = {
         },
         {
           title: "Үйл ажиллагаа",
-          href: "/activities/monitoring/ethics",
+          href: "/activities/ethics",
         },
         {
           title: "Бүрэлдэхүүн",
-          href: "/activities/monitoring/ethics",
+          href: "/activities/ethics",
         },
       ],
     },
