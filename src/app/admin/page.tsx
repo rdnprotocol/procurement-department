@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { LawDocumentsSection } from './components/LawDocumentsSection';
 import { ContactSection } from './components/ContactSection';
+import { ProvinceLinksSection } from './components/ProvinceLinksSection';
 import { Category, GetIdByHref } from "@/utils/category";
 import { PROVINCES } from "@/utils/provinces";
 import CreateNewsForm from '@/components/CreateNewsForm';
@@ -54,7 +55,7 @@ interface ContentData {
 interface MenuItem {
   title: string;
   href: string;
-  type: 'static' | 'category' | 'departments' | 'org_sections' | 'history_events' | 'law_documents' | 'contact';
+  type: 'static' | 'category' | 'departments' | 'org_sections' | 'history_events' | 'law_documents' | 'contact' | 'province_links';
   staticTypes?: string[];
   categoryHref?: string;
 }
@@ -176,12 +177,19 @@ const menuStructure: Record<string, MenuSection> = {
     title: 'Сумд',
     icon: MapPin,
     color: 'emerald',
-    items: PROVINCES.map((p) => ({
-      title: p.title,
-      href: `/province/${p.slug}`,
-      type: 'static' as const,
-      staticTypes: [`province-${p.slug}-plans`, `province-${p.slug}-tender`],
-    })),
+    items: [
+      {
+        title: 'Сумдын цэсний линк удирдах',
+        href: '/admin#province-links',
+        type: 'province_links' as const,
+      },
+      ...PROVINCES.map((p) => ({
+        title: p.title,
+        href: `/province/${p.slug}`,
+        type: 'static' as const,
+        staticTypes: [`province-${p.slug}-plans`, `province-${p.slug}-tender`],
+      })),
+    ],
   },
   contact: {
     title: 'Холбоо барих',
@@ -1392,6 +1400,11 @@ export default function AdminPage() {
                           {/* Contact Section */}
                           {item.type === 'contact' && (
                             <ContactSection />
+                          )}
+
+                          {/* Province menu links manager */}
+                          {item.type === 'province_links' && (
+                            <ProvinceLinksSection />
                           )}
                         </div>
                       )}

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PROVINCES } from "@/utils/provinces";
 import {
   Menubar,
@@ -211,6 +211,46 @@ const menuData = {
       { title: "Тендер шалгаруулалт", href: `/province/${p.slug}#tender-result` },
     ],
   })),
+};
+
+// API-аас ирэх province линкийн төрөл
+interface ProvinceLink {
+  slug: string;
+  title: string;
+  plans_url: string | null;
+  tender_url: string | null;
+  plans_label: string | null;
+  tender_label: string | null;
+  sort_order: number;
+}
+
+// Динамик province линкүүдээс цэсний бүтэц үүсгэх
+const buildProvinceMenu = (links: ProvinceLink[]): MenuCategory[] => {
+  // sort_order-ийн дагуу эрэмбэлж, бүх сум харагдах боломжтой
+  const sorted = [...links].sort((a, b) => a.sort_order - b.sort_order);
+
+  return sorted.map((p) => {
+    const plansHref =
+      p.plans_url && p.plans_url.trim()
+        ? p.plans_url.trim()
+        : `/province/${p.slug}#plans`;
+    const tenderHref =
+      p.tender_url && p.tender_url.trim()
+        ? p.tender_url.trim()
+        : `/province/${p.slug}#tender-result`;
+
+    return {
+      title: p.title,
+      href: `/province/${p.slug}`,
+      children: [
+        { title: p.plans_label || "Төлөвлөгөө", href: plansHref },
+        {
+          title: p.tender_label || "Тендер шалгаруулалт",
+          href: tenderHref,
+        },
+      ],
+    };
+  });
 };
 
 interface MenuItem {
@@ -440,6 +480,25 @@ const MobileNestedMenuSection = ({
 // Main MenuBar Component
 export const MenuBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [provinceMenu, setProvinceMenu] = useState<MenuCategory[]>(
+    menuData.province
+  );
+
+  useEffect(() => {
+    const fetchProvinceLinks = async () => {
+      try {
+        const res = await fetch("/api/province-links");
+        if (!res.ok) return;
+        const data: ProvinceLink[] = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setProvinceMenu(buildProvinceMenu(data));
+        }
+      } catch (error) {
+        console.error("Error fetching province links:", error);
+      }
+    };
+    fetchProvinceLinks();
+  }, []);
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
@@ -465,7 +524,7 @@ export const MenuBar = () => {
 
         <SimpleMenuSection title="Тендер" items={menuData.tender} />
 
-        <NestedMenuSection title="Сумд" categories={menuData.province} />
+        <NestedMenuSection title="Сумд" categories={provinceMenu} />
 
         <SimpleMenuSection
           title="Авилгын эсрэг"
@@ -544,7 +603,7 @@ export const MenuBar = () => {
 
               <MobileNestedMenuSection
                 title="Сумд"
-                categories={menuData.province}
+                categories={provinceMenu}
                 onClose={closeMobileMenu}
               />
 
