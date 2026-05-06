@@ -23,9 +23,11 @@ import {
   Building2,
   Save,
   X,
-  Clock
+  Clock,
+  Phone
 } from 'lucide-react';
 import { LawDocumentsSection } from './components/LawDocumentsSection';
+import { ContactSection } from './components/ContactSection';
 import { Category, GetIdByHref } from "@/utils/category";
 import { PROVINCES } from "@/utils/provinces";
 import CreateNewsForm from '@/components/CreateNewsForm';
@@ -52,7 +54,7 @@ interface ContentData {
 interface MenuItem {
   title: string;
   href: string;
-  type: 'static' | 'category' | 'departments' | 'org_sections' | 'history_events' | 'law_documents';
+  type: 'static' | 'category' | 'departments' | 'org_sections' | 'history_events' | 'law_documents' | 'contact';
   staticTypes?: string[];
   categoryHref?: string;
 }
@@ -180,6 +182,14 @@ const menuStructure: Record<string, MenuSection> = {
       type: 'static' as const,
       staticTypes: [`province-${p.slug}-plans`, `province-${p.slug}-tender`],
     })),
+  },
+  contact: {
+    title: 'Холбоо барих',
+    icon: Phone,
+    color: 'violet',
+    items: [
+      { title: 'Холбоо барих хуудас', href: '/contact', type: 'contact' },
+    ],
   },
 };
 
@@ -1377,6 +1387,11 @@ export default function AdminPage() {
                           {/* Law Documents Content */}
                           {item.type === 'law_documents' && (
                             <LawDocumentsSection />
+                          )}
+
+                          {/* Contact Section */}
+                          {item.type === 'contact' && (
+                            <ContactSection />
                           )}
                         </div>
                       )}
