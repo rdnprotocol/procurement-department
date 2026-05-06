@@ -2,16 +2,28 @@ import { createSupabaseServerClient } from "@/lib/supabaseClient";
 import { NextRequest, NextResponse } from "next/server";
 import { PROVINCES } from "@/utils/provinces";
 
+// HTML entity decode (хамгийн түгээмэл entity-уудыг буцаах)
+function decodeHtmlEntities(s: string): string {
+  return s
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, " ");
+}
+
 // HTML контентоос эхний URL-ийг таних (admin-д URL хоосон үед автоматаар ашиглах)
 function extractFirstUrl(html: string | null | undefined): string | null {
   if (!html) return null;
   // 1. <a href="https://..."> хайх
   const anchorMatch = html.match(/<a[^>]+href=["'](https?:\/\/[^"']+)["']/i);
-  if (anchorMatch) return anchorMatch[1];
+  if (anchorMatch) return decodeHtmlEntities(anchorMatch[1]);
   // 2. plain text-аас https:// эсвэл http:// хайх (HTML тагаас гадуурх)
   const stripped = html.replace(/<[^>]+>/g, " ");
   const plainMatch = stripped.match(/https?:\/\/[^\s<>"']+/);
-  if (plainMatch) return plainMatch[0];
+  if (plainMatch) return decodeHtmlEntities(plainMatch[0]);
   return null;
 }
 
