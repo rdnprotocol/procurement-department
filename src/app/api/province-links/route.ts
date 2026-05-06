@@ -2,17 +2,95 @@ import { createSupabaseServerClient } from "@/lib/supabaseClient";
 import { NextRequest, NextResponse } from "next/server";
 import { PROVINCES } from "@/utils/provinces";
 
-// Хүснэгт байхгүй эсвэл бичлэг дутуу үед үндсэн өгөгдөл буцаах
-function buildFallback() {
-  return PROVINCES.map((p, idx) => ({
-    slug: p.slug,
-    title: p.title,
-    plans_url: null as string | null,
-    tender_url: null as string | null,
+// HTML контентоос эхний URL-ийг таних (admin-д URL хоосон үед автоматаар ашиглах)
+function extractFirstUrl(html: string | null | undefined): string | null {
+  if (!html) return null;
+  // 1. <a href="https://..."> хайх
+  const anchorMatch = html.match(/<a[^>]+href=["'](https?:\/\/[^"']+)["']/i);
+  if (anchorMatch) return anchorMatch[1];
+  // 2. plain text-аас https:// эсвэл http:// хайх (HTML тагаас гадуурх)
+  const stripped = html.replace(/<[^>]+>/g, " ");
+  const plainMatch = stripped.match(/https?:\/\/[^\s<>"']+/);
+  if (plainMatch) return plainMatch[0];
+  return null;
+}
+
+interface ProvinceLinkRow {
+  slug: string;
+  title: string;
+  plans_url: string | null;
+  tender_url: string | null;
+  plans_label: string | null;
+  tender_label: string | null;
+  sort_order: number;
+}
+
+function defaultRow(slug: string, title: string, idx: number): ProvinceLinkRow {
+  return {
+    slug,
+    title,
+    plans_url: null,
+    tender_url: null,
     plans_label: "Төлөвлөгөө",
     tender_label: "Тендер шалгаруулалт",
     sort_order: idx + 1,
-  }));
+  };
+}
+
+// static_contents-аас URL-уудыг автоматаар таниулж бөглөх
+async function enrichWithStaticContent(
+  rows: ProvinceLinkRow[]
+): Promise<ProvinceLinkRow[]> {
+  // зөвхөн URL хоосон сумдын төрлүүдийг шалгах хэрэгтэй
+  const slugsNeeded = rows
+    .filter((r) => !r.plans_url || !r.tender_url)
+    .map((r) => r.slug);
+
+  if (slugsNeeded.length === 0) return rows;
+
+  const types: string[] = [];
+  for (const slug of slugsNeeded) {
+    types.push(`province-${slug}-plans`);
+    types.push(`province-${slug}-tender`);
+  }
+
+  try {
+    const supabase = createSupabaseServerClient();
+    const { data: contents, error } = await supabase
+      .from("static_contents")
+      .select("type, content")
+      .in("type", types);
+
+    if (error || !contents) return rows;
+
+    const contentMap = new Map<string, string>();
+    for (const c of contents) {
+      contentMap.set(c.type, c.content || "");
+    }
+
+    return rows.map((r) => {
+      const next = { ...r };
+      if (!next.plans_url) {
+        const html = contentMap.get(`province-${r.slug}-plans`);
+        const url = extractFirstUrl(html);
+        if (url) next.plans_url = url;
+      }
+      if (!next.tender_url) {
+        const html = contentMap.get(`province-${r.slug}-tender`);
+        const url = extractFirstUrl(html);
+        if (url) next.tender_url = url;
+      }
+      return next;
+    });
+  } catch (e) {
+    console.error("Error enriching with static content:", e);
+    return rows;
+  }
+}
+
+// Хүснэгт байхгүй эсвэл бичлэг дутуу үед үндсэн өгөгдөл буцаах
+function buildFallback(): ProvinceLinkRow[] {
+  return PROVINCES.map((p, idx) => defaultRow(p.slug, p.title, idx));
 }
 
 export async function GET() {
@@ -23,31 +101,23 @@ export async function GET() {
       .select("*")
       .order("sort_order", { ascending: true });
 
-    if (error) {
-      console.error("Error fetching province links:", error);
-      return NextResponse.json(buildFallback());
+    let rows: ProvinceLinkRow[];
+
+    if (error || !data || data.length === 0) {
+      console.error("province_links unavailable, using fallback:", error);
+      rows = buildFallback();
+    } else {
+      const map = new Map(data.map((d: ProvinceLinkRow) => [d.slug, d]));
+      rows = PROVINCES.map((p, idx) => {
+        const existing = map.get(p.slug);
+        if (existing) return existing as ProvinceLinkRow;
+        return defaultRow(p.slug, p.title, idx);
+      });
     }
 
-    if (!data || data.length === 0) {
-      return NextResponse.json(buildFallback());
-    }
-
-    // DB-д байгаа болон fallback-аас цогц жагсаалт буцаах
-    const map = new Map(data.map((d) => [d.slug, d]));
-    const merged = PROVINCES.map((p, idx) => {
-      const existing = map.get(p.slug);
-      if (existing) return existing;
-      return {
-        slug: p.slug,
-        title: p.title,
-        plans_url: null,
-        tender_url: null,
-        plans_label: "Төлөвлөгөө",
-        tender_label: "Тендер шалгаруулалт",
-        sort_order: idx + 1,
-      };
-    });
-    return NextResponse.json(merged);
+    // Хоосон URL-ыг static_contents-ээс автоматаар бөглөх
+    const enriched = await enrichWithStaticContent(rows);
+    return NextResponse.json(enriched);
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(buildFallback());
