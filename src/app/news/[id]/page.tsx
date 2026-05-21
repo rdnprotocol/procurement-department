@@ -107,9 +107,9 @@ export default function NewsDetailsPage() {
   // Үндсэн контент харуулах хэсэг
   return (
     <Container>
-      <div className="grid grid-cols-3 my-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 my-8 lg:my-12">
         {/* Зүүн талын үндсэн контент (2 багана) */}
-        <div className="col-span-2 flex w-full gap-8">
+        <div className="lg:col-span-2 flex w-full gap-8 min-w-0">
           <div className="space-y-6 w-full">
             {/* Толгой зураг */}
             {content.banner_image && (
@@ -122,11 +122,11 @@ export default function NewsDetailsPage() {
               />
             )}
             {/* Гарчиг */}
-            <h1 className="text-3xl font-bold">{content.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold leading-tight">{content.title}</h1>
             <Separator />
             
             {/* Мета мэдээлэл: Огноо ба ангилал */}
-            <div className="text-sm flex items-center gap-4 text-gray-600">
+            <div className="text-sm flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-gray-600">
               {/* Нийтлэгдсэн огноо */}
               <div className="flex items-center gap-2">
                 <Clock size={18} />
@@ -136,7 +136,7 @@ export default function NewsDetailsPage() {
                     new Date(content.created_date).toISOString().slice(0, 10)}
                 </p>
               </div>
-              <div>-</div>
+              <div className="hidden sm:block">-</div>
               {/* Ангиллын нэр */}
               <div className="flex items-center gap-2">
                 <Folder size={18} />
@@ -164,10 +164,10 @@ export default function NewsDetailsPage() {
             <section className="space-y-8">
               {content.items?.map((item, index) => {
                 // Файлын төрлийг тодорхойлох
-                const isImage =
-                  item.image?.toLowerCase().endsWith(".jpg") ||
-                  item.image?.toLowerCase().endsWith(".jpeg");
-                const isPDF = item.image?.toLowerCase().endsWith(".pdf");
+                const mediaUrl = item.image?.toLowerCase() || "";
+                const isImage = /\.(png|jpe?g|gif|webp|avif|svg)(\?|#|$)/i.test(mediaUrl);
+                const isPDF = /\.pdf(\?|#|$)/i.test(mediaUrl);
+                const isVideo = /\.(mp4|webm|ogg|ogv|mov|m4v)(\?|#|$)/i.test(mediaUrl);
 
                 return (
                   <div key={item.id || index} className="space-y-2">
@@ -187,16 +187,25 @@ export default function NewsDetailsPage() {
                     
                     {/* Хэрэв PDF файл бол */}
                     {isPDF && <PDFViewer href={item.image} />}
+
+                    {isVideo && (
+                      <video
+                        controls
+                        preload="metadata"
+                        src={item.image}
+                        className="w-full max-h-[70vh] rounded-xl bg-black"
+                      />
+                    )}
                   </div>
                 );
               })}
             </section>
           </div>
-          <Separator orientation="vertical" />
+          <Separator orientation="vertical" className="hidden lg:block" />
         </div>
 
         {/* Баруун талын нэмэлт мэдээлэл (1 багана) */}
-        <div className="col-span-1 pl-8">
+        <div className="lg:col-span-1 lg:pl-8">
           {/* Календар */}
           <Calendar
             mode="single"

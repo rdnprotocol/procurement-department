@@ -55,8 +55,8 @@ const tenderPages = [
 ];
 
 const externalLinks = [
-  { title: "Тендерийн урилга", href: "https://www.tender.gov.mn/mn/invitation" },
-  { title: "Тендер шалгаруулалтын үр дүн", href: "https://user.tender.gov.mn/mn/result/" },
+  { title: "Тендерийн урилга", href: "https://user.tender.gov.mn/mn/invitation?year=allYear&selGovernorId=149&selClientId=1706524250733&get=1" },
+  { title: "Тендер шалгаруулалтын үр дүн", href: "https://user.tender.gov.mn/mn/result/?year=2026&selGovernorId=149&selClientId=1706524250733&tenderCode=undefined&get=1" },
   { title: "Цахим дэлгүүр", href: "https://www.tender.gov.mn/mn/eshop" },
 ];
 

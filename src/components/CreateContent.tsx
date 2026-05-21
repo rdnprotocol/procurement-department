@@ -32,6 +32,7 @@ import {
   Plus,
   Trash2,
   Upload,
+  Video,
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -43,7 +44,7 @@ interface CreateContentProps {
 interface ContentItemValues {
   text: string;
   image: string;
-  file_type: "image" | "pdf" | null;
+  file_type: "image" | "pdf" | "video" | null;
 }
 
 interface CreateContentValues {
@@ -117,7 +118,7 @@ export const CreateContent: React.FC<CreateContentProps> = () => {
   const addItem = () => {
     const newItems = [
       ...createContentForm.values.items,
-      { text: "", image: "" },
+      { text: "", image: "", file_type: null },
     ];
     createContentForm.setFieldValue("items", newItems);
   };
@@ -201,14 +202,16 @@ export const CreateContent: React.FC<CreateContentProps> = () => {
     };
   };
 
-  const getFileIcon = (fileType: "image" | "pdf" | null) => {
+  const getFileIcon = (fileType: "image" | "pdf" | "video" | null) => {
     if (fileType === "pdf") return <FileText className="w-4 h-4" aria-label="PDF file" />;
+    if (fileType === "video") return <Video className="w-4 h-4" aria-label="Video file" />;
     if (fileType === "image") return <Image className="w-4 h-4" aria-label="Image file" />;
     return <Upload className="w-4 h-4" aria-label="Upload file" />;
   };
 
-  const getFileTypeText = (fileType: "image" | "pdf" | null) => {
+  const getFileTypeText = (fileType: "image" | "pdf" | "video" | null) => {
     if (fileType === "pdf") return "PDF файл сонгогдсон";
+    if (fileType === "video") return "Видео сонгогдсон";
     if (fileType === "image") return "Зураг сонгогдсон";
     return null;
   };
@@ -412,11 +415,11 @@ export const CreateContent: React.FC<CreateContentProps> = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-sm">Файл (Зураг эсвэл PDF)</Label>
+                      <Label className="text-sm">Файл (Зураг, PDF эсвэл видео)</Label>
                       <div className="flex items-center gap-2">
                         <Input
                           type="file"
-                          accept="image/*,.pdf"
+                          accept="image/*,.pdf,video/*"
                           onChange={(e) => handleItemFileUpload(index, e)}
                           className="hidden"
                           id={`item-file-${index}`}
@@ -454,6 +457,11 @@ export const CreateContent: React.FC<CreateContentProps> = () => {
                             {item.file_type === "pdf" && (
                               <div className="w-10 h-10 rounded border bg-red-50 flex items-center justify-center">
                                 <FileText className="w-5 h-5 text-red-600" />
+                              </div>
+                            )}
+                            {item.file_type === "video" && (
+                              <div className="w-10 h-10 rounded border bg-fuchsia-50 flex items-center justify-center">
+                                <Video className="w-5 h-5 text-fuchsia-600" />
                               </div>
                             )}
                           </div>

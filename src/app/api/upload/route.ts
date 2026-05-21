@@ -20,6 +20,9 @@ export async function POST(req: NextRequest) {
     if (file.type.startsWith("image/")) {
       typeCategory = "image";
       storageFolder = "images";
+    } else if (file.type.startsWith("video/")) {
+      typeCategory = "video";
+      storageFolder = "videos";
     } else if (file.type === "application/pdf") {
       typeCategory = "pdf";
       storageFolder = "documents";

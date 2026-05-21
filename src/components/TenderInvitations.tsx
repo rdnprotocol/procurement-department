@@ -81,11 +81,11 @@ export default function TenderInvitations({ items = SAMPLE_ITEMS, perPage = 3 }:
     <div className="col-span-3 py-12">
       <div className="max-w-6xl mx-auto">
         <div className="relative">
-          <div className="flex items-stretch justify-center gap-8">
+          <div className="flex flex-col md:flex-row items-stretch justify-center gap-8">
             {pageItems.map((it) => (
               <div
                 key={it.id}
-                className="bg-white rounded-lg shadow-xl p-6 border border-gray-100 w-[360px] flex flex-col hover:-translate-y-1 transition-transform duration-200"
+                className="bg-white rounded-lg shadow-xl p-6 border border-gray-100 w-full max-w-[360px] flex flex-col hover:-translate-y-1 transition-transform duration-200"
               >
                 <div className="flex items-start gap-3">
                   <div className="text-[#2b59d6] mt-1">

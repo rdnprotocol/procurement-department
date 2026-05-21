@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import type { ComponentPropsWithoutRef } from 'react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import 'react-quill-new/dist/quill.snow.css';
-import { Upload, FileText, Image as ImageIcon, Link as LinkIcon, X, Loader2 } from 'lucide-react';
+import { Upload, FileText, Image as ImageIcon, Link as LinkIcon, X, Loader2, Video } from 'lucide-react';
 import { normalizeHtmlForEditor, normalizeHtmlForStorage } from '@/utils/editorHtml';
 
 type ReactQuillComponent = typeof import('react-quill-new').default;
@@ -25,7 +25,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [uploadType, setUploadType] = useState<'image' | 'file'>('image');
+  const [uploadType, setUploadType] = useState<'image' | 'file' | 'video'>('image');
 
   // Keep the editor stable by stripping PDF iframes to links for editing.
   const editorValue = useMemo(() => normalizeHtmlForEditor(value), [value]);
@@ -48,6 +48,10 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
         setUploadError('Зөвхөн зураг файл сонгоно уу');
         return;
       }
+    }
+    if (uploadType === 'video' && !file.type.startsWith('video/')) {
+      setUploadError('Зөвхөн видео файл сонгоно уу');
+      return;
     }
 
     setUploading(true);
@@ -80,10 +84,18 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
           const fileName = file.name;
           const isPdf =
             file.type === 'application/pdf' || fileName.toLowerCase().endsWith('.pdf');
+          const isVideo =
+            file.type.startsWith('video/') ||
+            /\.(mp4|webm|ogg|ogv|mov|m4v)$/i.test(fileName);
 
           if (isPdf) {
             // Store PDFs as simple links; public pages enhance to inline viewer
             const fileIcon = '📄';
+            quill.insertText(range.index, `${fileIcon} ${fileName}`, 'link', result.url);
+            quill.setSelection(range.index + fileName.length + 3);
+          } else if (isVideo) {
+            // Store videos as simple links; public pages enhance to an inline player
+            const fileIcon = '▶';
             quill.insertText(range.index, `${fileIcon} ${fileName}`, 'link', result.url);
             quill.setSelection(range.index + fileName.length + 3);
           } else {
@@ -186,6 +198,15 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
           <FileText className="w-4 h-4" />
           <span className="hidden sm:inline">PDF/Файл</span>
         </button>
+        <button
+          type="button"
+          onClick={() => { setUploadType('video'); setShowUploadModal(true); setUploadError(null); }}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-white border rounded-lg hover:bg-gray-50 transition-colors"
+          title="Видео оруулах"
+        >
+          <Video className="w-4 h-4" />
+          <span className="hidden sm:inline">Видео</span>
+        </button>
       </div>
 
       <ReactQuill
@@ -204,7 +225,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
           <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">
-                {uploadType === 'image' ? 'Зураг оруулах' : 'Файл оруулах'}
+                {uploadType === 'image' ? 'Зураг оруулах' : uploadType === 'video' ? 'Видео оруулах' : 'Файл оруулах'}
               </h3>
               <button
                 onClick={() => setShowUploadModal(false)}
@@ -220,7 +241,7 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
                   type="file"
                   id="file-upload"
                   className="hidden"
-                  accept={uploadType === 'image' ? 'image/*' : '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx'}
+                  accept={uploadType === 'image' ? 'image/*' : uploadType === 'video' ? 'video/*' : '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx'}
                   onChange={handleFileUpload}
                   disabled={uploading}
                 />
@@ -238,9 +259,11 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
                       {uploading ? 'Оруулж байна...' : 'Файл сонгох'}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      {uploadType === 'image' 
+                      {uploadType === 'image'
                         ? 'JPG, PNG, GIF, WebP (5MB хүртэл)'
-                        : 'PDF, Word, Excel, PowerPoint (10MB хүртэл)'
+                        : uploadType === 'video'
+                          ? 'MP4, WebM, MOV (50MB хүртэл)'
+                          : 'PDF, Word, Excel, PowerPoint (10MB хүртэл)'
                       }
                     </p>
                   </div>

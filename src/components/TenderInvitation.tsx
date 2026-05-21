@@ -11,7 +11,20 @@ interface TenderData {
   banner_image: string;
   created_date: string;
   category_id: number;
+  href?: string;
 }
+
+const TENDER_INVITATION_URL =
+  "https://user.tender.gov.mn/mn/invitation?year=allYear&selGovernorId=149&selClientId=1706524250733&get=1";
+
+const getTenderGovSearchUrl = (tenderCode: string) =>
+  `${TENDER_INVITATION_URL}&tenderCode=${encodeURIComponent(tenderCode)}`;
+
+const isExternalLink = (href: string) =>
+  href.startsWith("http://") || href.startsWith("https://");
+
+const getTenderHref = (tender: TenderData) =>
+  tender.href || `/news/${tender.id}`;
 
 // Түр жишээ мэдээлэл (API-аас ирэх хүртэл)
 const sampleTenders: TenderData[] = [
@@ -21,7 +34,8 @@ const sampleTenders: TenderData[] = [
     description: "Балж голд төмөр бетон гүүр шинээр барих зураг төсөв /Хэнтий, Дадал сум/",
     banner_image: "",
     created_date: "2025-05-09",
-    category_id: 14
+    category_id: 14,
+    href: getTenderGovSearchUrl("ТХААГ/202504059/01/0"),
   },
   {
     id: 1002,
@@ -29,7 +43,8 @@ const sampleTenders: TenderData[] = [
     description: "Сургуулийн барилгын өргөтгөл, 960 суудал - Дархан-Уул, Дархан сум, Оюуны ирээдүй цогцолбор сургууль (холболтын зураг, төсөв)",
     banner_image: "",
     created_date: "2025-05-08",
-    category_id: 14
+    category_id: 14,
+    href: getTenderGovSearchUrl("ТХААГ/202504089/01/0"),
   },
   {
     id: 1003,
@@ -37,7 +52,8 @@ const sampleTenders: TenderData[] = [
     description: "Дархан-Уул аймгийн Дархан суманд 2 га талбайд ТЭЗҮС хийж шинээр \"Хүүхэд хамгаалал, хөгжлийн төв\"-ийг байгуулах хэсэгчилсэн ерөнхий төлөвлөгөө",
     banner_image: "",
     created_date: "2025-05-08",
-    category_id: 14
+    category_id: 14,
+    href: getTenderGovSearchUrl("ТХААГ/202504096/01/0"),
   },
   {
     id: 1004,
@@ -45,7 +61,8 @@ const sampleTenders: TenderData[] = [
     description: "Төв аймгийн Зуунмод сумын 3-р багт шинэ хороолол байгуулах дэд бүтцийн ажил",
     banner_image: "",
     created_date: "2025-05-07",
-    category_id: 14
+    category_id: 14,
+    href: getTenderGovSearchUrl("ТХААГ/202504102/01/0"),
   },
   {
     id: 1005,
@@ -53,7 +70,8 @@ const sampleTenders: TenderData[] = [
     description: "Эрдэнэт хотын төвийн замын засвар шинэчлэлтийн ажил",
     banner_image: "",
     created_date: "2025-05-06",
-    category_id: 14
+    category_id: 14,
+    href: getTenderGovSearchUrl("ТХААГ/202504115/01/0"),
   },
   {
     id: 1006,
@@ -61,7 +79,8 @@ const sampleTenders: TenderData[] = [
     description: "Улаанбаатар хотын гэр хороололд цэвэр усны шугам татах ажил",
     banner_image: "",
     created_date: "2025-05-05",
-    category_id: 14
+    category_id: 14,
+    href: getTenderGovSearchUrl("ТХААГ/202504128/01/0"),
   }
 ];
 
@@ -70,10 +89,26 @@ export function TenderInvitation() {
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const visibleItems = 3; // Нэг дор харуулах тоо
+  const [visibleItems, setVisibleItems] = useState(3); // Нэг дор харуулах тоо
 
   useEffect(() => {
     fetchTenders();
+  }, []);
+
+  useEffect(() => {
+    const updateVisibleItems = () => {
+      if (window.innerWidth < 768) {
+        setVisibleItems(1);
+      } else if (window.innerWidth < 1024) {
+        setVisibleItems(2);
+      } else {
+        setVisibleItems(3);
+      }
+    };
+
+    updateVisibleItems();
+    window.addEventListener("resize", updateVisibleItems);
+    return () => window.removeEventListener("resize", updateVisibleItems);
   }, []);
 
   async function fetchTenders() {
@@ -104,6 +139,10 @@ export function TenderInvitation() {
 
   const maxIndex = Math.max(0, tenders.length - visibleItems);
 
+  useEffect(() => {
+    setCurrentIndex((prev) => Math.min(prev, maxIndex));
+  }, [maxIndex]);
+
   const nextSlide = useCallback(() => {
     if (isTransitioning) return;
     setIsTransitioning(true);
@@ -123,7 +162,7 @@ export function TenderInvitation() {
     if (tenders.length <= visibleItems) return;
     const interval = setInterval(nextSlide, 4000);
     return () => clearInterval(interval);
-  }, [tenders.length, nextSlide]);
+  }, [tenders.length, nextSlide, visibleItems]);
 
   if (loading) {
     return (
@@ -230,16 +269,23 @@ export function TenderInvitation() {
               {/* Sliding Cards Container */}
               <div className="overflow-hidden">
                 <div 
-                  className="flex gap-6 transition-transform duration-700 ease-in-out"
+                  className="flex gap-6 transition-transform duration-700 ease-in-out [--slide-step:calc(100%+1.5rem)] md:[--slide-step:calc(50%+0.75rem)] lg:[--slide-step:calc(33.333%+0.5rem)]"
                   style={{ 
-                    transform: `translateX(calc(-${currentIndex} * (33.333% + 8px)))` 
+                    transform: `translateX(calc(-${currentIndex} * var(--slide-step)))` 
                   }}
                 >
-                {tenders.map((tender) => (
-                  <div
-                    key={tender.id}
-                    className="w-full md:w-[calc(33.333%-16px)] flex-shrink-0"
-                  >
+                {tenders.map((tender) => {
+                  const tenderHref = getTenderHref(tender);
+                  const external = isExternalLink(tenderHref);
+                  const linkProps = external
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {};
+
+                  return (
+                    <div
+                      key={tender.id}
+                      className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] flex-shrink-0"
+                    >
                     <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-blue-100 transition-all duration-300 overflow-hidden group h-full">
                     <div className="p-6">
                       {/* Code/Title with Icon */}
@@ -247,11 +293,15 @@ export function TenderInvitation() {
                         <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
                           <Link2 className="w-5 h-5 text-blue-600" />
                         </div>
-                        <h3 className="font-bold text-gray-900 line-clamp-1 flex-1 pt-1">
+                        <Link
+                          href={tenderHref}
+                          {...linkProps}
+                          className="font-bold text-gray-900 hover:text-blue-600 line-clamp-1 flex-1 pt-1 transition-colors"
+                        >
                           {tender.title.length > 25 
                             ? tender.title.slice(0, 25) + " ..." 
                             : tender.title}
-                        </h3>
+                        </Link>
                       </div>
 
                       {/* Description */}
@@ -271,7 +321,8 @@ export function TenderInvitation() {
 
                         {/* Detail Button */}
                         <Link
-                          href={`/news/${tender.id}`}
+                          href={tenderHref}
+                          {...linkProps}
                           className="flex items-center gap-1 text-blue-600 font-medium text-sm hover:text-blue-700 transition-colors group/btn"
                         >
                           Дэлгэрэнгүй
@@ -281,7 +332,8 @@ export function TenderInvitation() {
                     </div>
                   </div>
                   </div>
-                ))}
+                  );
+                })}
                 </div>
               </div>
             </div>
@@ -313,7 +365,9 @@ export function TenderInvitation() {
             {/* View All Link */}
             <div className="text-center mt-8">
               <Link
-                href="/category/tender-urilga"
+                href={TENDER_INVITATION_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
               >
                 Бүх тендерийн урилга

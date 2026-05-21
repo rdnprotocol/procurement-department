@@ -168,11 +168,11 @@ const menuData = {
     },
     {
       title: "Тендерийн урилга",
-      href: "https://www.tender.gov.mn/mn/invitation",
+      href: "https://user.tender.gov.mn/mn/invitation?year=allYear&selGovernorId=149&selClientId=1706524250733&get=1",
     },
     {
       title: "Тендер шалгаруулалтын үр дүн",
-      href: "https://user.tender.gov.mn/mn/result/",
+      href: "https://user.tender.gov.mn/mn/result/?year=2026&selGovernorId=149&selClientId=1706524250733&tenderCode=undefined&get=1",
     },
     {
       title: "А3 гэрчилгээтэй хүний нөөц",

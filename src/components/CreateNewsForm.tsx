@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Category } from '@/utils/category';
 import { RichTextEditor } from '@/components/RichTextEditor';
-import { Upload, X, Image as ImageIcon, FileText, Loader2 } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, FileText, Loader2, Video } from 'lucide-react';
 
 interface CreateNewsFormProps {
   defaultCategoryId?: number;
@@ -69,8 +69,9 @@ export default function CreateNewsForm({ defaultCategoryId, buttonText, buttonCl
         finalContent += '<div class="attachments mt-6 p-4 bg-gray-50 rounded-lg"><h4 class="font-semibold mb-3">Хавсралт файлууд:</h4><ul class="space-y-2">';
         formData.attachments.forEach(att => {
           const isPdf = att.type === 'pdf' || att.name.toLowerCase().endsWith('.pdf') || att.url.toLowerCase().includes('.pdf');
-          const icon = isPdf ? '📄' : att.type === 'image' ? '🖼️' : '📎';
-          // Store as link only; public pages enhance PDFs to inline viewer
+          const isVideo = att.type === 'video' || /\.(mp4|webm|ogg|ogv|mov|m4v)(\?|#|$)/i.test(att.name) || /\.(mp4|webm|ogg|ogv|mov|m4v)(\?|#|$)/i.test(att.url);
+          const icon = isPdf ? '📄' : isVideo ? '▶' : att.type === 'image' ? '🖼️' : '📎';
+          // Store as links; public pages enhance PDFs and videos to inline viewers.
           finalContent += `<li><a href="${att.url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">${icon} ${att.name}</a></li>`;
         });
         finalContent += '</ul></div>';
@@ -297,7 +298,7 @@ export default function CreateNewsForm({ defaultCategoryId, buttonText, buttonCl
       {/* Хавсралт файлууд */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Хавсралт файлууд (PDF, Зураг)
+          Хавсралт файлууд (PDF, Зураг, Видео)
         </label>
         
         {/* Existing attachments */}
@@ -308,6 +309,8 @@ export default function CreateNewsForm({ defaultCategoryId, buttonText, buttonCl
                 <div className="flex items-center gap-3">
                   {att.type === 'pdf' ? (
                     <FileText className="w-5 h-5 text-red-500" />
+                  ) : att.type === 'video' ? (
+                    <Video className="w-5 h-5 text-fuchsia-500" />
                   ) : att.type === 'image' ? (
                     <ImageIcon className="w-5 h-5 text-blue-500" />
                   ) : (
@@ -340,7 +343,7 @@ export default function CreateNewsForm({ defaultCategoryId, buttonText, buttonCl
           <input
             type="file"
             onChange={handleAttachmentUpload}
-            accept=".pdf,.doc,.docx,.xls,.xlsx,image/*"
+            accept=".pdf,.doc,.docx,.xls,.xlsx,image/*,video/*"
             className="hidden"
             disabled={uploadingAttachment}
           />

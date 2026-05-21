@@ -18,10 +18,26 @@ export function NewsSection() {
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const visibleItems = 3; // Нэг дор харуулах тоо
+  const [visibleItems, setVisibleItems] = useState(3); // Нэг дор харуулах тоо
 
   useEffect(() => {
     fetchNews();
+  }, []);
+
+  useEffect(() => {
+    const updateVisibleItems = () => {
+      if (window.innerWidth < 768) {
+        setVisibleItems(1);
+      } else if (window.innerWidth < 1024) {
+        setVisibleItems(2);
+      } else {
+        setVisibleItems(3);
+      }
+    };
+
+    updateVisibleItems();
+    window.addEventListener("resize", updateVisibleItems);
+    return () => window.removeEventListener("resize", updateVisibleItems);
   }, []);
 
   async function fetchNews() {
@@ -49,6 +65,10 @@ export function NewsSection() {
 
   const maxIndex = Math.max(0, news.length - visibleItems);
 
+  useEffect(() => {
+    setCurrentIndex((prev) => Math.min(prev, maxIndex));
+  }, [maxIndex]);
+
   const nextSlide = useCallback(() => {
     if (isTransitioning) return;
     setIsTransitioning(true);
@@ -68,7 +88,7 @@ export function NewsSection() {
     if (news.length <= visibleItems) return;
     const interval = setInterval(nextSlide, 5000);
     return () => clearInterval(interval);
-  }, [news.length, nextSlide]);
+  }, [news.length, nextSlide, visibleItems]);
 
   // Format date parts
   const formatDateParts = (dateStr: string) => {
@@ -170,9 +190,9 @@ export function NewsSection() {
         {/* Sliding Cards Container */}
         <div className="overflow-hidden">
           <div 
-            className="flex gap-6 transition-transform duration-700 ease-in-out"
+            className="flex gap-6 transition-transform duration-700 ease-in-out [--slide-step:calc(100%+1.5rem)] md:[--slide-step:calc(50%+0.75rem)] lg:[--slide-step:calc(33.333%+0.5rem)]"
             style={{ 
-              transform: `translateX(calc(-${currentIndex} * (33.333% + 8px)))` 
+              transform: `translateX(calc(-${currentIndex} * var(--slide-step)))` 
             }}
           >
           {news.map((item) => {
@@ -181,7 +201,7 @@ export function NewsSection() {
             return (
               <div
                 key={item.id}
-                className="w-full md:w-[calc(33.333%-16px)] flex-shrink-0"
+                className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] flex-shrink-0"
               >
                 <Link
                   href={`/news/${item.id}`}

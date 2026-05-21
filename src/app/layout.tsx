@@ -27,14 +27,22 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${robotoCondensed.variable}  font-sans`}>
+      <body
+        className={`${robotoCondensed.variable} font-sans ${
+          isAdminPage ? "overflow-hidden" : ""
+        }`}
+      >
         {!isAdminPage && (
           <>
             {/* <Header /> */}
             <NavBar />
           </>
         )}
-        <div className={isAdminPage ? "" : "min-h-[calc(100vh-360px-125px)]"}>
+        <div
+          className={
+            isAdminPage ? "h-dvh overflow-hidden" : "min-h-[calc(100vh-360px-125px)]"
+          }
+        >
           {children}
         </div>
         {!isAdminPage && (

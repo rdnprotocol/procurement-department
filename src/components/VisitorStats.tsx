@@ -20,9 +20,29 @@ export const VisitorStats = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const trackAndFetchStats = async () => {
+      setLoading(true);
+
       try {
-        const response = await fetch("/api/analytics");
+        const today = new Date().toISOString().slice(0, 10);
+        const storageKey = `visitor-tracked:${today}`;
+        const hasTracked =
+          typeof window !== "undefined" && sessionStorage.getItem(storageKey);
+
+        if (!hasTracked) {
+          const response = await fetch("/api/analytics", {
+            method: "POST",
+          });
+
+          const result = await response.json().catch(() => null);
+
+          if (response.ok && result?.success && typeof window !== "undefined") {
+            sessionStorage.setItem(storageKey, "1");
+          }
+        }
+
+        const response = await fetch("/api/analytics", { cache: "no-store" });
+
         if (response.ok) {
           const data = await response.json();
           setStats(data);
@@ -30,17 +50,17 @@ export const VisitorStats = () => {
       } catch (error) {
         console.error("Failed to fetch visitor stats:", error);
         setStats({
-          last24Hours: 147,
-          last7Days: 8251,
-          lastMonth: 11862,
-          total: 23708,
+          last24Hours: 0,
+          last7Days: 0,
+          lastMonth: 0,
+          total: 0,
         });
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStats();
+    trackAndFetchStats();
   }, []);
 
   const formatNumber = (num: number) => {
@@ -48,7 +68,7 @@ export const VisitorStats = () => {
   };
 
   const statItems = [
-    { label: "Сүүлийн 24 цаг", shortLabel: "24 цаг", value: stats.last24Hours },
+    { label: "Өнөөдөр", shortLabel: "Өнөөдөр", value: stats.last24Hours },
     { label: "Сүүлийн 7 хоног", shortLabel: "7 хоног", value: stats.last7Days },
     { label: "Сүүлийн сар", shortLabel: "Сар", value: stats.lastMonth },
     { label: "Нийт", shortLabel: "Нийт", value: stats.total, isTotal: true },

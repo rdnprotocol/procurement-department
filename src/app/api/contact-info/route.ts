@@ -22,7 +22,7 @@ const DEFAULT_CONTACT_INFO = {
   director_department: "Захиргаа, санхүүгийн хэлтэс",
   director_position: "Уг тагч, зохион байгуулагч",
   director_person: "",
-  director_room: "716 тоот өрөө",
+  director_room: "",
   director_phone: "7755-3579",
 };
 

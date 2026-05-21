@@ -594,7 +594,7 @@ export default function AdminPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="h-dvh bg-gray-100 flex items-center justify-center overflow-hidden">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Уншиж байна...</p>
@@ -604,15 +604,15 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="h-dvh bg-gray-100 flex overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-72 bg-slate-900 text-white flex-shrink-0 fixed h-full overflow-y-auto">
+      <aside className="w-72 bg-slate-900 text-white flex-shrink-0 h-dvh overflow-hidden flex flex-col">
         <div className="p-6 border-b border-slate-700">
           <h1 className="text-xl font-bold">Админ удирдлага</h1>
           <p className="text-slate-400 text-sm mt-1">Цэсний бүтцээр удирдах</p>
         </div>
         
-        <nav className="p-4 space-y-1">
+        <nav className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-y-1">
           {/* Dashboard */}
           <button
             onClick={() => setActiveMenu('dashboard')}
@@ -656,7 +656,7 @@ export default function AdminPage() {
 
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-700 bg-slate-900">
+        <div className="p-4 border-t border-slate-700 bg-slate-900">
           <button 
             onClick={() => router.push('/')}
             className="w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition-colors"
@@ -668,7 +668,7 @@ export default function AdminPage() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-72 p-8">
+      <main className="flex-1 min-w-0 h-dvh overflow-y-auto overscroll-contain p-8">
         {/* Dashboard */}
         {activeMenu === 'dashboard' && (
           <div className="space-y-8">
@@ -776,11 +776,16 @@ export default function AdminPage() {
                     staticItems = item.staticTypes
                       .map(t => getStaticByType(t))
                       .filter(Boolean) as StaticContent[];
+                  } else if (item.type === 'org_sections') {
+                    staticItems = [getStaticByType('intro')]
+                      .filter(Boolean) as StaticContent[];
                   } else if (item.type === 'category' && item.categoryHref) {
                     contents = getContentsByCategory(item.categoryHref);
                   }
 
-                  const totalCount = item.type === 'static' ? staticItems.length : contents.length;
+                  const totalCount = item.type === 'static' || item.type === 'org_sections'
+                    ? staticItems.length
+                    : contents.length;
 
                   return (
                     <div key={idx} className="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -1048,6 +1053,97 @@ export default function AdminPage() {
                           {/* Organization Sections Content */}
                           {item.type === 'org_sections' && (
                             <div className="space-y-4">
+                              {(() => {
+                                const intro = getStaticByType('intro');
+                                const hasIntro = intro && intro.content;
+
+                                return (
+                                  <div className="bg-white rounded-lg border p-4 hover:shadow-sm transition-shadow">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-4 min-w-0">
+                                        <div className={`w-3 h-10 rounded-full ${
+                                          hasIntro ? 'bg-gradient-to-b from-green-500 to-green-600' : 'bg-gradient-to-b from-orange-500 to-orange-600'
+                                        }`} />
+                                        <div className="min-w-0">
+                                          <div className="flex items-center gap-2">
+                                            <h4 className="font-medium text-gray-900">Үндсэн танилцуулга</h4>
+                                            <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
+                                              Контент
+                                            </span>
+                                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                              hasIntro ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                                            }`}>
+                                              {hasIntro ? 'Бүртгэлтэй' : 'Хоосон'}
+                                            </span>
+                                          </div>
+                                          {intro ? (
+                                            hasIntro ? (
+                                              <div
+                                                className="text-sm text-gray-500 line-clamp-1"
+                                                dangerouslySetInnerHTML={{ __html: intro.content }}
+                                              />
+                                            ) : (
+                                              <p className="text-sm text-gray-500">Агуулга оруулаагүй байна</p>
+                                            )
+                                          ) : (
+                                            <p className="text-sm text-gray-500">Контент үүсгэгдээгүй байна</p>
+                                          )}
+                                        </div>
+                                      </div>
+
+                                      <div className="flex items-center gap-2 flex-shrink-0">
+                                        {intro ? (
+                                          <button
+                                            onClick={() => handleEditStatic(intro)}
+                                            className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
+                                          >
+                                            <Edit3 className="w-4 h-4" />
+                                          </button>
+                                        ) : (
+                                          <button
+                                            onClick={async () => {
+                                              try {
+                                                const res = await fetch('/api/static-content', {
+                                                  method: 'POST',
+                                                  headers: { 'Content-Type': 'application/json' },
+                                                  body: JSON.stringify({
+                                                    title: staticTypeLabels.intro,
+                                                    content: '',
+                                                    type: 'intro'
+                                                  })
+                                                });
+
+                                                if (res.ok) {
+                                                  await fetchData();
+                                                } else {
+                                                  const error = await res.json();
+                                                  alert(error.error || 'Алдаа гарлаа');
+                                                }
+                                              } catch (error) {
+                                                console.error('Error creating intro content:', error);
+                                                alert('Контент үүсгэхэд алдаа гарлаа');
+                                              }
+                                            }}
+                                            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 transition-colors"
+                                          >
+                                            <Plus className="w-4 h-4" />
+                                            Үүсгэх
+                                          </button>
+                                        )}
+                                        {intro && (
+                                          <button
+                                            onClick={() => handleDelete(intro.id, 'static')}
+                                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+                                          >
+                                            <Trash2 className="w-4 h-4" />
+                                          </button>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+
                               <div className="flex items-center justify-between mb-4">
                                 <p className="text-sm text-gray-600">{orgSections.length} хэсэг бүртгэлтэй</p>
                                 <div className="flex gap-2">

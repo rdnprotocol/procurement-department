@@ -1,59 +1,123 @@
 import { NextResponse } from "next/server";
+import { createSupabaseServerClient } from "@/lib/supabaseClient";
 
-// Google Analytics Data API-тай холбогдох
-// Энэ файлыг тохируулсны дараа бодит өгөгдөл авах боломжтой
+export const dynamic = "force-dynamic";
+
+interface DailyStatRow {
+  day: string;
+  views: number;
+}
+
+const emptyStats = {
+  today: 0,
+  last24Hours: 0,
+  last7Days: 0,
+  lastMonth: 0,
+  total: 0,
+  isConfigured: false,
+};
+
+function toUtcDay(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function daysAgo(days: number) {
+  return toUtcDay(new Date(Date.now() - days * 24 * 60 * 60 * 1000));
+}
+
+function isAnalyticsNotConfigured(error: { code?: string; message?: string }) {
+  return (
+    error.code === "PGRST202" ||
+    error.code === "PGRST205" ||
+    error.code === "42P01" ||
+    error.message?.includes("visitor_daily_stats") ||
+    error.message?.includes("increment_visitor_daily_stats")
+  );
+}
+
+async function hasDailyStatsTable() {
+  const supabase = createSupabaseServerClient();
+  const { error } = await supabase
+    .from("visitor_daily_stats")
+    .select("day")
+    .limit(1);
+
+  if (!error) {
+    return true;
+  }
+
+  if (isAnalyticsNotConfigured(error)) {
+    return false;
+  }
+
+  throw error;
+}
+
+function sumViews(rows: DailyStatRow[], fromDay?: string) {
+  return rows.reduce((sum, row) => {
+    if (fromDay && row.day < fromDay) {
+      return sum;
+    }
+
+    return sum + (Number(row.views) || 0);
+  }, 0);
+}
 
 export async function GET() {
   try {
-    // TODO: Google Analytics API-тай холбогдох
-    // Одоогоор демо өгөгдөл буцаана
-    
-    // Хэрэв GOOGLE_APPLICATION_CREDENTIALS тохируулсан бол
-    // Google Analytics Data API ашиглана
-    if (process.env.GOOGLE_ANALYTICS_PROPERTY_ID) {
-      const stats = await fetchGoogleAnalyticsData();
-      return NextResponse.json(stats);
+    if (!(await hasDailyStatsTable())) {
+      return NextResponse.json(emptyStats);
     }
 
-    // Демо өгөгдөл
-    const demoStats = {
-      last24Hours: 147,
-      last7Days: 8251,
-      lastMonth: 11862,
-      total: 23708,
-    };
+    const supabase = createSupabaseServerClient();
+    const { data, error } = await supabase
+      .from("visitor_daily_stats")
+      .select("day, views")
+      .order("day", { ascending: false });
 
-    return NextResponse.json(demoStats);
+    if (error) {
+      throw error;
+    }
+
+    const rows = (data || []) as DailyStatRow[];
+    const today = toUtcDay(new Date());
+    const todayViews = sumViews(rows, today);
+    const last7Days = sumViews(rows, daysAgo(6));
+    const lastMonth = sumViews(rows, daysAgo(29));
+    const total = sumViews(rows);
+
+    return NextResponse.json({
+      today: todayViews,
+      last24Hours: todayViews,
+      last7Days,
+      lastMonth,
+      total,
+      isConfigured: true,
+    });
   } catch (error) {
-    console.error("Analytics API Error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch analytics" },
-      { status: 500 }
-    );
+    console.error("Analytics stats error:", error);
+    return NextResponse.json(emptyStats);
   }
 }
 
-// Google Analytics Data API-с өгөгдөл татах функц
-async function fetchGoogleAnalyticsData() {
-  // Google Analytics тохируулсны дараа энэ функц ажиллана
-  // @google-analytics/data пакетийг ашиглана
-  
-  const propertyId = process.env.GOOGLE_ANALYTICS_PROPERTY_ID;
-  
-  if (!propertyId) {
-    throw new Error("GOOGLE_ANALYTICS_PROPERTY_ID is not set");
+export async function POST() {
+  try {
+    const supabase = createSupabaseServerClient();
+    const { error } = await supabase.rpc("increment_visitor_daily_stats", {
+      stat_day: toUtcDay(new Date()),
+    });
+
+    if (error) {
+      if (isAnalyticsNotConfigured(error)) {
+        return NextResponse.json({ success: false, isConfigured: false });
+      }
+
+      throw error;
+    }
+
+    return NextResponse.json({ success: true, isConfigured: true });
+  } catch (error) {
+    console.error("Analytics tracking error:", error);
+    return NextResponse.json({ success: false, isConfigured: false });
   }
-
-  // Жишээ: google-analytics/data пакетийг ашиглан өгөгдөл авах
-  // const { BetaAnalyticsDataClient } = require("@google-analytics/data");
-  // const analyticsDataClient = new BetaAnalyticsDataClient();
-  
-  // Одоогоор демо өгөгдөл буцаана
-  return {
-    last24Hours: 147,
-    last7Days: 8251,
-    lastMonth: 11862,
-    total: 23708,
-  };
 }
-

@@ -114,7 +114,7 @@ export function StatsBanner() {
     },
     {
       icon: Building2,
-      count: 95,
+      count: 10,
       label: "Ажилтнууд",
       color: "from-purple-500 to-purple-600",
       delay: "300ms"

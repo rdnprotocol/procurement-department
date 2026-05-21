@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS contact_info (
     director_department TEXT DEFAULT 'Захиргаа, санхүүгийн хэлтэс',
     director_position TEXT DEFAULT 'Уг тагч, зохион байгуулагч',
     director_person TEXT DEFAULT '',
-    director_room TEXT DEFAULT '716 тоот өрөө',
+    director_room TEXT DEFAULT '',
     director_phone TEXT DEFAULT '7755-3579',
 
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('UTC', NOW()),
